@@ -48,7 +48,7 @@ data:
                 translation_overflow: 0.05
             valid_border_margin: 2
     warped_pair:
-        enable: false
+        enable: false # false when training only on detector
         params:
             translation: true
             rotation: true
@@ -103,8 +103,6 @@ validation_interval: 1000 # one validation of entire val set every N training st
 validation_size: 10
 train_show_interval: 1000 # one show of the current training from to Tensorboard every N training steps
 seed: 0
-#save_interval: 5000
-#keep_checkpoints: 20
 
 # pretrained: 'logs/superpoint_syn_heat1_0/checkpoints/superPointNet_100000_checkpoint.pth.tar'
 
