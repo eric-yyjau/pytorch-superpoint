@@ -22,6 +22,7 @@ from settings import EXPER_PATH
 
 ## loaders: data, model, pretrained model
 from utils.loader import dataLoader, modelLoader, pretrainedLoader
+from utils.logging import *
 # from models.model_wrap import SuperPointFrontend_torch, PointTracker
 
 ###### util functions ######

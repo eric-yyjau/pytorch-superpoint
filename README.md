@@ -115,7 +115,7 @@ export_folder: <'train' | 'val'>  # set export for training or validation
 ```
 python export.py <export task>  <config file>  <export folder> [--outputImg | output images for visualization (space inefficient)]
 ```
-#### export coco - do on training set  (test: ok)
+#### export coco - do on training set 
 ```
 python export.py export_detector_homoAdapt configs/magicpoint_coco_export.yaml magicpoint_synth_homoAdapt_coco
 ```
@@ -144,7 +144,7 @@ python export.py export_detector_homoAdapt configs/magicpoint_tum_export.yaml ma
 You need pseudo ground truth labels to traing detectors. Labels can be exported from step 2) or downloaded from [link](https://drive.google.com/drive/folders/1nnn0UbNMFF45nov90PJNnubDyinm2f26?usp=sharing). Then, as usual, you need to set config file before training.
 - config file
   - root: specify your labels root
-  - root_split_txt: where you put the train.txt/ val.txt split files
+  - root_split_txt: where you put the train.txt/ val.txt split files (no need for COCO, needed for KITTI)
   - labels: the exported labels from homography adaptation
   - pretrained: specify the pretrained model (you can train from scratch)
 - 'eval': turn on the evaluation during training 

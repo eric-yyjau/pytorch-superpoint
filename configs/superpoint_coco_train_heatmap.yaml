@@ -9,7 +9,7 @@ data:
 #    labels: superpoint_pretrained_homoAdapt100_coco/predictions
     # labels: coco_test # Complete with your export labels
     # labels: logs/magicpoint_synth_homoAdapt_coco/predictions
-    labels: magicpoint_synth20_homoAdapt100_coco_f1/predictions
+    labels: datasets/magicpoint_synth20_homoAdapt100_coco_f1/predictions
     root: # datasets/COCO
     root_split_txt: # /datasets/COCO
 
@@ -57,6 +57,10 @@ data:
         valid_border_margin: 3
 
 front_end_model: 'Train_model_heatmap'  # 'Train_model_frontend'
+
+training:
+    workers_train: 4 # 16
+    workers_val: 2 # 2
 
 model:
     # name: 'magic_point'

@@ -54,6 +54,10 @@ data:
 
 front_end_model: 'Train_model_heatmap'  # 'Train_model_frontend'
 
+training:
+    workers_train: 4 # 16
+    workers_val: 2 # 2
+
 model:
     name: 'SuperPointNet_gauss2'
     params: {

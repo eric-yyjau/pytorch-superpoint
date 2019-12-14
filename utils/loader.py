@@ -41,6 +41,11 @@ def worker_init_fn(worker_id):
 
 def dataLoader(config, dataset='syn', warp_input=False, train=True, val=True):
     import torchvision.transforms as transforms
+    training_params = config.get('training', None)
+    if training_params is not None:
+        workers_train = training_params.get('workers_train', 1) # 16
+        workers_val   = training_params.get('workers_val', 1) # 16
+    logging.info(f"workers_train: {workers_train}, workers_val: {workers_val}")
     data_transforms = {
         'train': transforms.Compose([
             transforms.ToTensor(),
@@ -63,7 +68,7 @@ def dataLoader(config, dataset='syn', warp_input=False, train=True, val=True):
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=config['model']['batch_size'], shuffle=True,
         pin_memory=True,
-        num_workers=8,
+        num_workers=workers_train,
         worker_init_fn=worker_init_fn
     )
     val_set = Dataset(
@@ -74,7 +79,7 @@ def dataLoader(config, dataset='syn', warp_input=False, train=True, val=True):
     val_loader = torch.utils.data.DataLoader(
         val_set, batch_size=config['model']['eval_batch_size'], shuffle=True,
         pin_memory=True,
-        num_workers=8,
+        num_workers=workers_val,
         worker_init_fn=worker_init_fn
     )
     # val_set, val_loader = None, None
@@ -83,6 +88,11 @@ def dataLoader(config, dataset='syn', warp_input=False, train=True, val=True):
 
 def dataLoader_test(config, dataset='syn', warp_input=False, export_task='train'):
     import torchvision.transforms as transforms
+    training_params = config.get('training', None)
+    if training_params is not None:
+        workers_test = training_params.get('workers_test', 1) # 16
+    logging.info(f"workers_test: {workers_test}")
+
     data_transforms = {
         'test': transforms.Compose([
             transforms.ToTensor(),
@@ -110,7 +120,7 @@ def dataLoader_test(config, dataset='syn', warp_input=False, export_task='train'
         test_loader = torch.utils.data.DataLoader(
             test_set, batch_size=1, shuffle=False,
             pin_memory=True,
-            num_workers=8,
+            num_workers=workers_test,
             worker_init_fn=worker_init_fn
         )
     elif dataset == 'coco':
@@ -123,7 +133,7 @@ def dataLoader_test(config, dataset='syn', warp_input=False, export_task='train'
         test_loader = torch.utils.data.DataLoader(
             test_set, batch_size=1, shuffle=False,
             pin_memory=True,
-            num_workers=8,
+            num_workers=workers_test,
             worker_init_fn=worker_init_fn
         )
     # elif dataset == 'Kitti' or 'Tum':
@@ -139,7 +149,7 @@ def dataLoader_test(config, dataset='syn', warp_input=False, export_task='train'
         test_loader = torch.utils.data.DataLoader(
             test_set, batch_size=1, shuffle=False,
             pin_memory=True,
-            num_workers=8,
+            num_workers=workers_test,
             worker_init_fn=worker_init_fn
 
         )

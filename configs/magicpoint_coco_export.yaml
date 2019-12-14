@@ -27,6 +27,9 @@ data:
                 allow_artifacts: true
                 patch_ratio: 0.85
 
+training:
+    workers_test: 2
+
 model:
     # name: 'SuperPointNet' # 'SuperPointNet_gauss2'
     name: 'SuperPointNet_gauss2' # 'SuperPointNet_gauss2'
