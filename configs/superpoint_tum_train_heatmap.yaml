@@ -1,8 +1,6 @@
 data:
-    name: 'tum'
+    # name: 'tum'
     dataset: 'Tum' # 'Kitti'
-#     labels: kitti_test/predictions_wVal
-    # labels: magicpoint_synth20_homoAdapt100_kitti_h96/predictions_wVal
     root: '/data/tum/raw_sequences' # use in export, and training
     root_split_txt: 'datasets/tum_split'    
     labels: logs/magicpoint_base_homoAdapt_tum_rawSeq/predictions
@@ -15,8 +13,6 @@ data:
     cache_in_memory: false
     preprocessing:
        resize: [480, 640]  # hand defined, original: [375, 1242]
-#         resize: [192, 624]
-        # resize: [96, 312]
     augmentation:
         photometric:
             enable: true
@@ -68,8 +64,6 @@ model:
     detection_threshold: 0.015 # 0.015
     nms: 4
     lambda_loss: 1
-    # descriptor_dist: 4
-    # lambda_d: 800
     # top_k: 300
     dense_loss:
         enable: false
@@ -94,10 +88,8 @@ validation_interval: 2000
 tensorboard_interval: 400
 save_interval: 2000
 validation_size: 5
-# pretrained: 'logs/magicpoint_kitti2/checkpoints/superPointNet_160000_checkpoint.pth.tar'
-# pretrained: 'logs/magicpoint_kitti2/checkpoints/superPointNet_160000_checkpoint.pth.tar'
-# pretrained: 'logs/superpoint_coco40_15/checkpoints/superPointNet_170000_checkpoint.pth.tar'
-# pretrained: 'logs/superpoint_coco40_15/checkpoints/superPointNet_170000_checkpoint.pth.tar'
+
 # pretrained: 'logs/superpoint_coco_heat2_0/checkpoints/superPointNet_90000_checkpoint.pth.tar'
+pretrained: 
 
 

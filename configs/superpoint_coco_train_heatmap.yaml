@@ -1,21 +1,13 @@
 data:
-    name: 'coco'
+    # name: 'coco'
     dataset: 'Coco' # 'coco'
-#    labels: superpoint_base199_homoAdapt_coco_top600_resize/predictions # Complete with your export labels
-#    labels: superpoint_homoAdapt100_coco_det199_top600_resize/predictions # Complete with your export labels
-#     labels: superpoint_homoAdapt100_coco_det255_top600_resize/predictions
-#     labels: magicpoint_syn100k_homoAdapt100_coco/predictions
-#    labels: magicpoint_synth14_200k_homoAdap100_coco/predictions
-#    labels: superpoint_pretrained_homoAdapt100_coco/predictions
-    # labels: coco_test # Complete with your export labels
-    # labels: logs/magicpoint_synth_homoAdapt_coco/predictions
+
     labels: datasets/magicpoint_synth20_homoAdapt100_coco_f1/predictions
     root: # datasets/COCO
     root_split_txt: # /datasets/COCO
 
     gaussian_label:
         enable: true
-        # sigma: 0.5 # 0.8
         params:
             GaussianBlur: {sigma: 0.2}
 
@@ -76,8 +68,6 @@ model:
     eval_batch_size: 8 # 32
     learning_rate: 0.0001 # 0.0001
     detection_threshold: 0.015 # 0.015
-    # descriptor_dist: 7.5 # 4, 7.5
-    # lambda_d: 800 # 800
     lambda_loss: 1 # 1
     nms: 4
     dense_loss:
@@ -101,8 +91,6 @@ model:
         # settings: 'predict flow directly'
         # loss_func: 'subpixel_loss_no_argmax' # subpixel_loss, subpixel_loss_no_argmax
 
-    # top_k: 300
-
 retrain: True # set true for new model
 reset_iter: True # set true to set the iteration number to 0
 train_iter: 200000 # 170000
@@ -111,16 +99,7 @@ tensorboard_interval: 200 # 200
 save_interval: 200 # 2000
 validation_size: 5
 
-# train_iter: 100 # 170000
-# validation_interval: 50
-# tensorboard_interval: 20
-# save_interval: 20
-
 pretrained: 
-# pretrained: 'pretrained/superpoint_v1.pth'
-# pretrained: 'logs/superpoint_coco_heat2_0/checkpoints/superPointNet_90000_checkpoint.pth.tar'
 
-# pretrained: 'logs/superpoint_coco20_5/checkpoints/superPointNet_50000_checkpoint.pth.tar'
-# pretrained: 'logs/superpoint_coco_heat1_6/checkpoints/superPointNet_170000_checkpoint.pth.tar'
 
 
