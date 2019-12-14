@@ -1,3 +1,7 @@
+"""util functions for visualization
+
+"""
+
 import argparse
 import time
 import csv

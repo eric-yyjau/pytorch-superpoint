@@ -85,6 +85,7 @@ $DATA_DIR
     - [download link](http://www.cvlibs.net/download.php?file=raw_data_downloader.zip)
 
 
+
 ## run the code
 - Notes:
     - Start from any steps (1-4) by downloading some intermediate results
@@ -201,6 +202,8 @@ logs/superpoint_coco_heat2_0/checkpoints/superPointNet_170000_checkpoint.pth.tar
 ```
 logs/superpoint_kitti_heat2_0/checkpoints/superPointNet_50000_checkpoint.pth.tar
 ```
+### model from magicleap
+```pretrained/superpoint_v1.pth```
 
 ## Jupyter notebook 
 ```

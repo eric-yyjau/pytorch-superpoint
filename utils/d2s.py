@@ -1,3 +1,8 @@
+"""Module used to change 2D labels to 3D labels and vise versa.
+Mimic function from tensorflow.
+
+"""
+
 import torch
 import torch.nn as nn
 class DepthToSpace(nn.Module):

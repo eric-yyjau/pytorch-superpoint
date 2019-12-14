@@ -1,3 +1,7 @@
+""" photometric augmentation
+# used in dataloader 
+"""
+
 from imgaug import augmenters as iaa
 import numpy as np
 import cv2

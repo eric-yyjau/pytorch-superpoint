@@ -1,3 +1,10 @@
+"""util functions
+# many old functions, need to clean up
+# homography --> homography
+# warping
+# loss --> delete if useless
+"""
+
 import numpy as np
 import torch
 from pathlib import Path
@@ -364,7 +371,6 @@ def inv_warp_image(img, mat_homo_inv, device='cpu', mode='bilinear'):
     return warped_img.squeeze()
 
 
-
 def labels2Dto3D(labels, cell_size, add_dustbin=True):
     '''
     Change the shape of labels into 3D. Batch of labels.
@@ -428,9 +434,6 @@ def labels2Dto3D_flattened(labels, cell_size):
     labels = torch.cat((labels*2, dustbin.view(batch_size, 1, Hc, Wc)), dim=1)
     labels = torch.argmax(labels, dim=1)
     return labels
-
-
-
 
 
 
@@ -507,7 +510,7 @@ def flattenDetection(semi, tensor=False):
     # else:
     # Convert pytorch -> numpy.
     # --- Process points.
-#     dense = nn.functional.softmax(semi, dim=0) # [65, Hc, Wc]
+    # dense = nn.functional.softmax(semi, dim=0) # [65, Hc, Wc]
     if batch:
         dense = nn.functional.softmax(semi, dim=1) # [batch, 65, Hc, Wc]
         # Remove dustbin.
@@ -818,13 +821,13 @@ def descriptor_loss(descriptors, descriptors_warped, homographies, mask_valid=No
     # sum of the dimension
 
     if mask_valid is None:
-#         mask_valid = torch.ones_like(mask)
+        # mask_valid = torch.ones_like(mask)
         mask_valid = torch.ones(batch_size, 1, Hc*cell_size, Wc*cell_size)
     mask_valid = mask_valid.view(batch_size, 1, 1, mask_valid.shape[2], mask_valid.shape[3])
 
     loss_desc = lamda_d * mask * positive_dist + (1 - mask) * negative_dist
     loss_desc = loss_desc * mask_valid
-#         mask_validg = torch.ones_like(mask)
+        # mask_validg = torch.ones_like(mask)
     ##### bug in normalization
     normalization = (batch_size * (mask_valid.sum()+1) * Hc * Wc)
     pos_sum = (lamda_d * mask * positive_dist/normalization).sum()

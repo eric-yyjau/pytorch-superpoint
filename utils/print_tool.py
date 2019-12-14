@@ -1,3 +1,7 @@
+"""tools to print object shape or type
+
+"""
+
 
 # from utils.print_tool import print_config
 def print_config(config, file=None):

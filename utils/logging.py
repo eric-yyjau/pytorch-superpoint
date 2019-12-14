@@ -1,3 +1,7 @@
+"""colorful logging
+# import the whole file
+"""
+
 import coloredlogs, logging
 logging.basicConfig()
 logger = logging.getLogger()

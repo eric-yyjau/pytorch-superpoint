@@ -1,3 +1,6 @@
+"""copy labels out of images (step 2)
+"""
+
 import subprocess
 from glob import glob
 import os

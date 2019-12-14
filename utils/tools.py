@@ -1,3 +1,6 @@
+"""tools to combine dictionary
+
+"""
 import collections
 
 

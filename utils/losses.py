@@ -1,3 +1,9 @@
+"""losses
+# losses for heatmap residule
+# use it if you're computing residual loss. 
+# current disable residual loss
+
+"""
 # losse
 import torch
 

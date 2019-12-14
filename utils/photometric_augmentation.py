@@ -1,3 +1,7 @@
+""" deprecated: photometric augmentation from tensorflow implementation
+# not used in our pipeline
+# need to verify if synthetic generation uses it.
+"""
 import cv2 as cv
 import numpy as np
 import tensorflow as tf

@@ -1,3 +1,6 @@
+"""change the dimension of tensor/ numpy array
+"""
+
 import numpy as np
 import torch
 

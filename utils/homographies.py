@@ -1,4 +1,7 @@
-
+"""Sample homography matrices
+# mimic the function from tensorflow
+# very tricky. Need to be careful for using the parameters.
+"""
 from math import pi
 import cv2
 import numpy as np
@@ -137,7 +140,7 @@ def sample_homography_np(
     return homography
 
 
-
+## function from tensorflow implemention
 def sample_homography(
         shape, perspective=True, scaling=True, rotation=True, translation=True,
         n_scales=5, n_angles=25, scaling_amplitude=0.1, perspective_amplitude_x=0.1,
