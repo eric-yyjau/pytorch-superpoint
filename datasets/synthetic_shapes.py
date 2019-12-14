@@ -1,4 +1,4 @@
-"""
+""" Used to dump synthetic dataset
 from https://github.com/rpautrat/SuperPoint/blob/master/superpoint/datasets/synthetic_shapes.py
 
 """

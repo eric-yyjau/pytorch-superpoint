@@ -41,10 +41,10 @@ def worker_init_fn(worker_id):
 
 def dataLoader(config, dataset='syn', warp_input=False, train=True, val=True):
     import torchvision.transforms as transforms
-    training_params = config.get('training', None)
-    if training_params is not None:
-        workers_train = training_params.get('workers_train', 1) # 16
-        workers_val   = training_params.get('workers_val', 1) # 16
+    training_params = config.get('training', {})
+    workers_train = training_params.get('workers_train', 1) # 16
+    workers_val   = training_params.get('workers_val', 1) # 16
+        
     logging.info(f"workers_train: {workers_train}, workers_val: {workers_val}")
     data_transforms = {
         'train': transforms.Compose([
@@ -88,9 +88,8 @@ def dataLoader(config, dataset='syn', warp_input=False, train=True, val=True):
 
 def dataLoader_test(config, dataset='syn', warp_input=False, export_task='train'):
     import torchvision.transforms as transforms
-    training_params = config.get('training', None)
-    if training_params is not None:
-        workers_test = training_params.get('workers_test', 1) # 16
+    training_params = config.get('training', {})
+    workers_test = training_params.get('workers_test', 1) # 16
     logging.info(f"workers_test: {workers_test}")
 
     data_transforms = {

@@ -1,8 +1,8 @@
+""" Module used to generate geometrical synthetic shapes """
+
 import cv2 as cv
 import numpy as np
 import math
-
-""" Module used to generate geometrical synthetic shapes """
 
 random_state = np.random.RandomState(None)
 

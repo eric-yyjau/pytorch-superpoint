@@ -1,3 +1,10 @@
+"""dataloader for TUM rgbd dataset
+(inherited from Coco)
+
+Author: You-Yi Jau, Rui Zhu
+Date: 2019/12/12
+"""
+
 import numpy as np
 import tensorflow as tf
 import torch
