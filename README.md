@@ -33,7 +33,6 @@ conda create --name py36-sp python=3.6
 conda activate py36-sp
 pip install -r requirements.txt
 pip install -r requirements_torch.txt # install pytorch
-<!-- export TMPDIR= -->
 ```
 
 ### Path setting
@@ -172,19 +171,20 @@ python train4.py train_joint configs/superpoint_kitti_train_heatmap.yaml superpo
 - ```./run_export.sh``` will run export then evaluation.
 
 #### Export
+- download HPatches dataset (link above). Put in the $DATA_DIR.
+```python export.py <export task> <config file> <export folder>```
 - Export keypoints, descriptors, matching
 ```
-python export.py <export task> <config file> <export folder>
 python export.py export_descriptor  configs/magicpoint_repeatability_heatmap.yaml superpoint_hpatches_test
 ```
 #### evaluate
+```python evaluation.py <path to npz files> [-r, --repeatibility | -o, --outputImg | -homo, --homography ]```
 - Evaluate homography estimation/ repeatability/ matching scores ...
 ```
-python evaluation.py <path to npz files> [-r, --repeatibility | -o, --outputImg | -homo, --homography ]
 python evaluation.py logs/superpoint_hpatches_test/predictions --repeatibility --outputImg --homography --plotMatching
 ```
 
-### 5) Export/ Evaluate repeatability on SIFT
+### 5) Export/ Evaluate repeatability on SIFT (not tested)
 ```
 python export_classical.py export_descriptor configs/classical_descriptors.yaml sift_test --correspondence
 ```
@@ -195,22 +195,17 @@ python export_classical.py export_descriptor configs/classical_descriptors.yaml 
 ## Pretrained models
 ### Current best model
 - *COCO dataset*
-```
-logs/superpoint_coco_heat2_0/checkpoints/superPointNet_170000_checkpoint.pth.tar
-```
+```logs/superpoint_coco_heat2_0/checkpoints/superPointNet_170000_checkpoint.pth.tar```
 - *KITTI dataset*
-```
-logs/superpoint_kitti_heat2_0/checkpoints/superPointNet_50000_checkpoint.pth.tar
-```
+```logs/superpoint_kitti_heat2_0/checkpoints/superPointNet_50000_checkpoint.pth.tar```
 ### model from magicleap
 ```pretrained/superpoint_v1.pth```
 
 ## Jupyter notebook 
-```
-notebooks/visualize_hpatches.ipynb -- show images saved in the folders
-```
+```notebooks/visualize_hpatches.ipynb -- show images saved in the folders```
 
 ## Known problems
+- test step 5: evaluate on SIFT
 - Export COCO dataset in low resolution (240x320) instead of high resolution (480x640).
 - Due to step 1 was done long time ago. We are still testing it again along with step 2-4. Please refer to our pretrained model or exported labels. Or let us know how the whole pipeline works.
 - Warnings from tensorboard.
