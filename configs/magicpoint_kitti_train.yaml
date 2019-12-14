@@ -1,0 +1,88 @@
+data:
+    name: 'kitti'
+    dataset: 'kitti'  # 'coco' 'hpatches'
+#    labels: superpoint_base199_homoAdapt_coco_top600_resize/predictions # Complete with your export labels
+# labels: superpoint_kitti-test/predictions
+# labels: magicpoint_synth20_homoAdapt100_kitti/predictions
+    labels: magicpoint_synth20_homoAdapt100_kitti_r0.5/predictions_wVal
+    
+    
+    validation_size: 192
+    preprocessing:
+        # resize: [192, 624]
+        resize: [96, 312]
+    gaussian_label:
+        enable: false # false
+        sigma: 1.
+    augmentation:
+        photometric:
+            enable: true
+            enable_train: true
+            enable_val: false
+            primitives: [
+                'random_brightness', 'random_contrast', 'additive_speckle_noise',
+                'additive_gaussian_noise', 'additive_shade', 'motion_blur' ]
+            params:
+                random_brightness: {max_abs_change: 50}
+                random_contrast: {strength_range: [0.3, 1.5]}
+                additive_gaussian_noise: {stddev_range: [0, 10]}
+                additive_speckle_noise: {prob_range: [0, 0.0035]}
+                additive_shade:
+                    transparency_range: [-0.5, 0.5]
+                    kernel_size_range: [100, 150]
+                motion_blur: {max_kernel_size: 3} 
+        homographic:
+            enable: true # true
+            enable_train: true
+            enable_val: false
+            params:
+                translation: true
+                rotation: true
+                scaling: true
+                perspective: true
+                scaling_amplitude: 0.2
+                perspective_amplitude_x: 0.2
+                perspective_amplitude_y: 0.2
+                patch_ratio: 0.85
+                max_angle: 1.57
+                allow_artifacts: true
+            valid_border_margin: 3
+            
+    warped_pair:
+        enable: false
+        params:
+            translation: true
+            rotation: true
+            scaling: true
+            perspective: true
+            scaling_amplitude: 0.2
+            perspective_amplitude_x: 0.2
+            perspective_amplitude_y: 0.2
+            patch_ratio: 0.85
+            max_angle: 1.57
+            allow_artifacts: true # true
+        valid_border_margin: 3
+
+model:
+    name: 'magic_point'
+    batch_size: 32 # 32
+    eval_batch_size: 32
+    learning_rate: 0.001
+    detection_threshold: 0.001 # 0.015
+    nms: 4
+    # top_k: 300
+retrain: false # set true for new model
+reset_iter: true
+#pretrained: 'logs/magicpoint_coco/checkpoints/superPointNet_529_checkpoint.pth.tar'
+# pretrained: 'logs/magicpoint_synth_rui_thres4_softmaxce/checkpoints/superPointNet_200007_checkpoint.pth.tar'
+# pretrained: '/home/yoyee/Documents/deepSfm/logs/magicpoint_synth15/checkpoints/superPointNet_200208_checkpoint.pth.tar'
+# pretrained: '/home/yoyee/Documents/deepSfm/logs/magicpoint_synth14/checkpoints/superPointNet_200111_checkpoint.pth.tar'
+# pretrained: 'logs/magicpoint_coco5/checkpoints/superPointNet_84608_checkpoint.pth.tar'
+#pretrained: 'pretrained/superpoint_v1.pth'
+#
+pretrained: 'logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar'
+
+train_iter: 200000
+# validation_interval: 1000
+validation_interval: 500 # 500 # one validation of entire val set every N training steps
+train_show_interval: 1000 # one show of the current training from to Tensorboard every N training steps

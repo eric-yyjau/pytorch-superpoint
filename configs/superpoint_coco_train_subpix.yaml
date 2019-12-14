@@ -1,0 +1,104 @@
+data:
+    name: 'coco'
+    dataset: 'coco'
+#    labels: superpoint_base199_homoAdapt_coco_top600_resize/predictions # Complete with your export labels
+#    labels: superpoint_homoAdapt100_coco_det199_top600_resize/predictions # Complete with your export labels
+#     labels: superpoint_homoAdapt100_coco_det255_top600_resize/predictions
+#     labels: magicpoint_syn100k_homoAdapt100_coco/predictions
+#    labels: magicpoint_synth14_200k_homoAdap100_coco/predictions
+#    labels: superpoint_pretrained_homoAdapt100_coco/predictions
+    # labels: coco_test # Complete with your export labels
+    labels: magicpoint_synth20_homoAdapt100_coco_f1/predictions
+#     labels: magicpoint_coco20_homoAdapt100_coco/predictions
+
+    gaussian_label:
+        enable: true
+        sigma: 1 # 0.8
+    cache_in_memory: false
+    validation_size: 10
+    preprocessing:
+        resize: [240, 320]
+    augmentation:
+        photometric:
+            enable: true
+            primitives: [
+                'random_brightness', 'random_contrast', 'additive_speckle_noise',
+                'additive_gaussian_noise', 'additive_shade', 'motion_blur']
+            params:
+                random_brightness: {max_abs_change: 50}
+                random_contrast: {strength_range: [0.5, 1.5]}
+                additive_gaussian_noise: {stddev_range: [0, 10]}
+                additive_speckle_noise: {prob_range: [0, 0.0035]}
+                additive_shade:
+                    transparency_range: [-0.5, 0.5]
+                    kernel_size_range: [100, 150]
+                motion_blur: {max_kernel_size: 3}
+        homographic:
+            enable: false  # not implemented
+    warped_pair:
+        enable: true
+        params:
+            translation: true
+            rotation: true
+            scaling: true
+            perspective: true
+            scaling_amplitude: 0.2
+            perspective_amplitude_x: 0.2
+            perspective_amplitude_y: 0.2
+            patch_ratio: 0.85
+            max_angle: 1.57
+            allow_artifacts: true # true
+        valid_border_margin: 3
+
+
+model:
+    name: 'magic_point'
+    batch_size: 8 # 32
+    eval_batch_size: 8 # 32
+    learning_rate: 0.0001 # 0.0001
+    detection_threshold: 0.015 # 0.015
+    # descriptor_dist: 7.5 # 4, 7.5
+    # lambda_d: 800 # 800
+    lambda_loss: 1 # 1
+    nms: 4
+    dense_loss:
+        enable: false
+        params:
+            descriptor_dist: 4 # 4, 7.5
+            lambda_d: 800 # 800
+    sparse_loss:
+        enable: true
+        params:
+            num_matching_attempts: 1000
+            num_masked_non_matches_per_match: 100
+            lamda_d: 1
+            dist: 'cos'
+            method: '1d'
+            other_settings: 'train from scratch, try subpixel'
+    subpixel:
+        enable: true
+        params:
+            subpixel_channel: 2
+        settings: 'predict flow directly'
+        loss_func: 'subpixel_loss_no_argmax' # subpixel_loss, subpixel_loss_no_argmax
+
+    # top_k: 300
+
+retrain: True # set true for new model
+reset_iter: True # set true to set the iteration number to 0
+train_iter: 170000 # 170000
+validation_interval: 2000
+tensorboard_interval: 200
+save_interval: 2000
+
+# train_iter: 100 # 170000
+# validation_interval: 50
+# tensorboard_interval: 20
+# save_interval: 20
+
+# pretrained: 'pretrained/superpoint_v1.pth'
+
+# pretrained: 'logs/superpoint_coco20_5/checkpoints/superPointNet_50000_checkpoint.pth.tar'
+# pretrained: 'logs/superpoint_coco50_3/checkpoints/superPointNet_20_checkpoint.pth.tar'
+
+

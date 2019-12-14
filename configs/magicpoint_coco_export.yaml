@@ -1,0 +1,48 @@
+data:
+    dataset: 'Coco'  # 'coco' 'hpatches'
+    export_folder: 'val' # train, val
+    preprocessing:
+        resize: [240, 320] 
+        # resize: [480, 640] 
+    gaussian_label:
+        enable: false # false
+        sigma: 1.
+    augmentation:
+        photometric:
+            enable: false
+    homography_adaptation:
+        enable: true
+        num: 100 # 100
+        aggregation: 'sum'
+        filter_counts: 0
+        homographies:
+            params:
+                translation: true
+                rotation: true
+                scaling: true
+                perspective: true
+                scaling_amplitude: 0.2
+                perspective_amplitude_x: 0.2
+                perspective_amplitude_y: 0.2
+                allow_artifacts: true
+                patch_ratio: 0.85
+
+model:
+    # name: 'SuperPointNet' # 'SuperPointNet_gauss2'
+    name: 'SuperPointNet_gauss2' # 'SuperPointNet_gauss2'
+    params: {
+    }    
+    batch_size: 1
+    eval_batch_size: 1
+    detection_threshold: 0.015 # 0.015
+    nms: 4
+    top_k: 600
+    subpixel:
+        enable: true
+
+# eval_iter: -1
+
+# pretrained: 'logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar'
+pretrained: 'logs/magicpoint_synth_t2/checkpoints/superPointNet_100000_checkpoint.pth.tar'
+
+

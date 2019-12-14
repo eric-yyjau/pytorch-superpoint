@@ -1,0 +1,123 @@
+data:
+  add_augmentation_to_test_set: false
+  augmentation:
+    homographic:
+      enable: true
+      enable_train: true
+      enable_val: false
+      params:
+        allow_artifacts: true
+        max_angle: 1.57
+        patch_ratio: 0.8
+        perspective: true
+        perspective_amplitude_x: 0.2
+        perspective_amplitude_y: 0.2
+        rotation: true
+        scaling: true
+        scaling_amplitude: 0.2
+        translation: true
+        translation_overflow: 0.05
+      valid_border_margin: 2
+    photometric:
+      enable: true
+      enable_train: true
+      enable_val: false
+      params:
+        additive_gaussian_noise:
+          stddev_range:
+          - 0
+          - 15
+        additive_shade:
+          kernel_size_range:
+          - 50
+          - 100
+          transparency_range:
+          - -0.5
+          - 0.8
+        additive_speckle_noise:
+          prob_range:
+          - 0
+          - 0.0035
+        motion_blur:
+          max_kernel_size: 7
+        random_brightness:
+          max_abs_change: 75
+        random_contrast:
+          strength_range:
+          - 0.3
+          - 1.8
+      primitives:
+      - random_brightness
+      - random_contrast
+      - additive_speckle_noise
+      - additive_gaussian_noise
+      - additive_shade
+      - motion_blur
+  cache_in_memory: true
+  dataset: SyntheticDataset_gaussian
+  gaussian_label:
+    enable: false
+    params:
+      GaussianBlur:
+        sigma: 0.2
+  preprocessing:
+    blur_size: 21
+    resize:
+    - 120
+    - 160
+  primitives: all
+  suffix: v6
+  truncate:
+    draw_ellipses: 0.3
+    draw_stripes: 0.2
+    gaussian_noise: 0.1
+  warped_pair:
+    enable: false
+    params:
+      allow_artifacts: true
+      max_angle: 1.57
+      patch_ratio: 0.85
+      perspective: true
+      perspective_amplitude_x: 0.2
+      perspective_amplitude_y: 0.2
+      rotation: true
+      scaling: true
+      scaling_amplitude: 0.2
+      translation: true
+    valid_border_margin: 3
+front_end_model: Train_model_heatmap
+model:
+  batch_size: 64
+  dense_loss:
+    enable: false
+    params:
+      descriptor_dist: 4
+      lambda_d: 800
+  detection_threshold: 0.001
+  detector_loss:
+    loss_type: softmax
+  eval_batch_size: 16
+  kernel_reg: 0.0
+  lambda_loss: 0
+  learning_rate: 0.001
+  name: SuperPointNet_gauss2
+  nms: 4
+  other_settings: train 2d, gauss 0.5
+  params: {}
+  sparse_loss:
+    enable: true
+    params:
+      dist: cos
+      lamda_d: 1
+      method: 2d
+      num_masked_non_matches_per_match: 100
+      num_matching_attempts: 1000
+reset_iter: true
+retrain: true
+save_interval: 2000
+seed: 0
+tensorboard_interval: 1000
+train_iter: 200000
+train_show_interval: 1000
+validation_interval: 1000
+validation_size: 10

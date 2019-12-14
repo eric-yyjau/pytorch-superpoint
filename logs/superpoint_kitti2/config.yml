@@ -1,0 +1,73 @@
+data:
+  augmentation:
+    homographic:
+      enable: false
+      params: {}
+    photometric:
+      enable: true
+      params:
+        additive_gaussian_noise:
+          stddev_range:
+          - 0
+          - 10
+        additive_shade:
+          kernel_size_range:
+          - 100
+          - 150
+          transparency_range:
+          - -0.5
+          - 0.5
+        additive_speckle_noise:
+          prob_range:
+          - 0
+          - 0.0035
+        motion_blur:
+          max_kernel_size: 3
+        random_brightness:
+          max_abs_change: 50
+        random_contrast:
+          strength_range:
+          - 0.5
+          - 1.5
+      primitives:
+      - random_brightness
+      - random_contrast
+      - additive_speckle_noise
+      - additive_gaussian_noise
+      - additive_shade
+      - motion_blur
+  cache_in_memory: false
+  labels: magicpoint_synth20_homoAdapt100_kitti_r0.5/predictions_wVal
+  name: kitti
+  preprocessing:
+    resize:
+    - 96
+    - 312
+  validation_size: 192
+  warped_pair:
+    enable: true
+    params:
+      allow_artifacts: true
+      max_angle: 1.57
+      patch_ratio: 0.85
+      perspective: true
+      perspective_amplitude_x: 0.2
+      perspective_amplitude_y: 0.2
+      rotation: true
+      scaling: true
+      scaling_amplitude: 0.2
+      translation: true
+    valid_border_margin: 3
+model:
+  batch_size: 3
+  descriptor_dist: 4
+  detection_threshold: 0.001
+  eval_batch_size: 32
+  learning_rate: 0.001
+  name: magic_point
+  nms: 4
+pretrained: logs/magicpoint_kitti2/checkpoints/superPointNet_160000_checkpoint.pth.tar
+reset_iter: true
+retrain: false
+train_iter: 200000
+validation_interval: 1000

@@ -1,0 +1,58 @@
+data:
+    # name: 'kitti'
+    dataset: 'Tum'  # 'coco' 'hpatches'
+    export_folder: 'val'
+    alteration: 'all'  # 'all' 'i' 'v'
+    root: '/data/tum/raw_sequences' # root for dataset
+    root_split_txt: 'datasets/tum_split'
+    preprocessing:
+       resize: [480, 640]  # hand defined, original: [480, 640]
+
+    gaussian_label:
+        enable: false # false
+        sigma: 1.
+    homography_adaptation:
+        enable: true
+        num: 20 # 100
+        aggregation: 'sum'
+        filter_counts: 0
+        homographies:
+            params:
+                translation: true
+                rotation: true
+                scaling: true
+                perspective: true
+                scaling_amplitude: 0.2
+                perspective_amplitude_x: 0.2
+                perspective_amplitude_y: 0.2
+                allow_artifacts: true
+                patch_ratio: 0.85
+#    name: 'coco'
+#    cache_in_memory: false
+#    validation_size: 100
+model:
+    name: 'SuperPointNet'  # need to use old version of network
+    batch_size: 1
+    detection_threshold: 0.015 # 0.015
+    nms: 4
+    top_k: 600 # no use
+
+    params: {}
+    subpixel:
+        enable: true # false
+
+eval_iter: -1
+#pretrained: '/home/yoyee/Documents/deepSfm/logs/magic-point_synth_4/checkpoints/superPointNet_199_checkpoint.pth.tar'
+#pretrained: '/home/yoyee/Documents/deepSfm/logs/magicpoint_coco/checkpoints/superPointNet_255_checkpoint.pth.tar'
+#pretrained: '/home/yoyee/Documents/deepSfm/logs/magicpoint_synth/checkpoints/superPointNet_1_checkpoint.pth.tar'
+# pretrained: '/home/yoyee/Documents/deepSfm/logs/magicpoint_synth14/checkpoints/superPointNet_200111_checkpoint.pth.tar'
+# pretrained: '/home/yoyee/Documents/deepSfm/logs/magicpoint_synth_0307ray/checkpoints/superPointNet_72240_checkpoint.pth.tar'
+
+# pretrained: 'pretrained/superpoint_v1.pth'
+
+# pretrained: 'logs/magicpoint_synth4/checkpoints/superPointNet_200111_checkpoint.pth.tar'
+# pretrained: 'logs/magicpoint_synth_rui_thres4_softmaxce/checkpoints/superPointNet_200007_checkpoint.pth.tar'
+
+pretrained: 'logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar'
+
+

@@ -1,0 +1,74 @@
+data:
+    name: 'synthetic_shapes'
+    dataset: 'syn'
+    primitives: 'all'
+    truncate: {draw_ellipses: 0.3, draw_stripes: 0.2, gaussian_noise: 0.1}
+    cache_in_memory: true
+    validation_size: 500
+    suffix: 'v6'
+    add_augmentation_to_test_set: false  # set to true to evaluate with noise
+    gaussian_label:
+        enable: false
+        sigma: 0.8
+    preprocessing: ## didn't do this
+        blur_size: 21
+        resize: [120, 160]
+    augmentation:
+        photometric:
+            enable_train: true
+            enable_val: false
+            primitives: [
+                'random_brightness', 'random_contrast', 'additive_speckle_noise',
+                'additive_gaussian_noise', 'additive_shade', 'motion_blur' ]
+            params:
+                random_brightness: {max_abs_change: 75}
+                random_contrast: {strength_range: [0.3, 1.8]}
+                additive_gaussian_noise: {stddev_range: [0, 15]}
+                additive_speckle_noise: {prob_range: [0, 0.0035]}
+                additive_shade:
+                    transparency_range: [-0.5, 0.8]
+                    kernel_size_range: [50, 100]
+                motion_blur: {max_kernel_size: 7} # origin 7
+        homographic:
+            enable_train: true
+            enable_val: false
+            params:
+                translation: true
+                rotation: true
+                scaling: true
+                perspective: true
+                scaling_amplitude: 0.2
+                perspective_amplitude_x: 0.2
+                perspective_amplitude_y: 0.2
+                patch_ratio: 0.8
+                max_angle: 1.57  # 3.14
+                allow_artifacts: true
+                translation_overflow: 0.05
+            valid_border_margin: 2
+    warped_pair:
+        enable: false
+
+
+model:
+    name: 'SuperPointNet_gauss2' ### check
+    params: {}
+    batch_size:  64 # 64
+    eval_batch_size: 50
+    learning_rate: 0.001
+    kernel_reg: 0.
+    detection_threshold: 0.001 # 1/65
+    nms: 4
+    
+retrain: true # set true for new model
+reset_iter: true
+#pretrained: 'pretrained/superpoint_v1.pth'
+#pretrained: 'logs/magic-point_synth/checkpoints/superPointNet_32_checkpoint.pth.tar'
+#pretrained: 'logs/magic-point_synth_2/checkpoints/superPointNet_163_checkpoint.pth.tar'
+
+train_iter: 200000
+eval_iter: 200
+validation_interval: 200 # one validation of entire val set every N training steps
+train_show_interval: 1000 # one show of the current training from to Tensorboard every N training steps
+seed: 0
+#save_interval: 5000
+#keep_checkpoints: 20

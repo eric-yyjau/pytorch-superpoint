@@ -1,0 +1,3 @@
+rgbd_dataset_freiburg1_desk2
+rgbd_dataset_freiburg2_xyz
+rgbd_dataset_freiburg3_nostructure_texture_far

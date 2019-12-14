@@ -1,0 +1,29 @@
+data:
+  alteration: all
+  dataset: hpatches
+  name: patches_dataset
+  preprocessing:
+    resize:
+    - 240
+    - 320
+eval_iter: 1000
+front_end_model: Val_model_heatmap
+model:
+  batch_size: 1
+  detection_threshold: 0.015
+  eval_batch_size: 1
+  homography_adaptation:
+    num: 0
+  learning_rate: 0.001
+  name: SuperPointNet_gauss2
+  nms: 4
+  nn_thresh: 1.0
+  params: {}
+  pretrained: logs/superpoint_coco_heat2_0/checkpoints/superPointNet_170000_checkpoint.pth.tar
+  rand_noise:
+    enable: false
+    sigma: 0.2
+  subpixel:
+    enable: true
+    patch_size: 5
+  top_k: 1000

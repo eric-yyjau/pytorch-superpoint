@@ -1,0 +1,97 @@
+data:
+  augmentation:
+    homographic:
+      enable: false
+    photometric:
+      enable: true
+      params:
+        additive_gaussian_noise:
+          stddev_range:
+          - 0
+          - 10
+        additive_shade:
+          kernel_size_range:
+          - 100
+          - 150
+          transparency_range:
+          - -0.5
+          - 0.5
+        additive_speckle_noise:
+          prob_range:
+          - 0
+          - 0.0035
+        motion_blur:
+          max_kernel_size: 3
+        random_brightness:
+          max_abs_change: 50
+        random_contrast:
+          strength_range:
+          - 0.5
+          - 1.5
+      primitives:
+      - random_brightness
+      - random_contrast
+      - additive_speckle_noise
+      - additive_gaussian_noise
+      - additive_shade
+      - motion_blur
+  cache_in_memory: false
+  dataset: Coco
+  gaussian_label:
+    enable: true
+    params:
+      GaussianBlur:
+        sigma: 0.2
+  labels: magicpoint_synth20_homoAdapt100_coco_f1/predictions
+  name: coco
+  preprocessing:
+    resize:
+    - 240
+    - 320
+  warped_pair:
+    enable: true
+    params:
+      allow_artifacts: true
+      max_angle: 1.57
+      patch_ratio: 0.85
+      perspective: true
+      perspective_amplitude_x: 0.2
+      perspective_amplitude_y: 0.2
+      rotation: true
+      scaling: true
+      scaling_amplitude: 0.2
+      translation: true
+    valid_border_margin: 3
+front_end_model: Train_model_heatmap
+model:
+  batch_size: 8
+  dense_loss:
+    enable: false
+    params:
+      descriptor_dist: 4
+      lambda_d: 800
+  detection_threshold: 0.015
+  detector_loss:
+    loss_type: softmax
+  eval_batch_size: 8
+  lambda_loss: 1
+  learning_rate: 0.0001
+  name: SuperPointNet_gauss2
+  nms: 4
+  other_settings: train 2d, gauss 0.2
+  params: {}
+  sparse_loss:
+    enable: true
+    params:
+      dist: cos
+      lamda_d: 1
+      method: 2d
+      num_masked_non_matches_per_match: 100
+      num_matching_attempts: 1000
+reset_iter: true
+retrain: true
+save_interval: 2000
+tensorboard_interval: 200
+train_iter: 170000
+validation_interval: 200
+validation_size: 10

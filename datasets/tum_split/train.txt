@@ -1,0 +1,4 @@
+rgbd_dataset_freiburg1_desk
+rgbd_dataset_freiburg1_room
+rgbd_dataset_freiburg2_desk
+rgbd_dataset_freiburg3_long_office_household
