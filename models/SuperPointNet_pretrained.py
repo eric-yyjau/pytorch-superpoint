@@ -1,3 +1,7 @@
+"""
+Network to load pretrained model from Magicleap.
+"""
+
 import torch
 import torch.nn as nn
 from torch.nn.init import xavier_uniform_, zeros_

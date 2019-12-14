@@ -1,3 +1,7 @@
+""" class to process superpoint net
+# may be some duplication with model_wrap.py
+# PointTracker is from Daniel's repo.
+"""
 
 import numpy as np
 import torch

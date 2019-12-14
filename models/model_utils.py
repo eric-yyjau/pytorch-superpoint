@@ -1,3 +1,7 @@
+""" class to process superpoint net
+# may be some duplication with model_wrap.py
+"""
+
 import torch
 import numpy as np
 
