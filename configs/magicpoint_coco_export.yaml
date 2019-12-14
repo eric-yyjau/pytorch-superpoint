@@ -1,6 +1,6 @@
 data:
     dataset: 'Coco'  # 'coco' 'hpatches'
-    export_folder: 'val' # train, val
+    export_folder: 'train' # train, val
     preprocessing:
         resize: [240, 320] 
         # resize: [480, 640] 
@@ -40,9 +40,7 @@ model:
     subpixel:
         enable: true
 
-# eval_iter: -1
-
-# pretrained: 'logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar'
+# pretrained: 'logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar' # 'SuperPointNet'
 pretrained: 'logs/magicpoint_synth_t2/checkpoints/superPointNet_100000_checkpoint.pth.tar'
 
 

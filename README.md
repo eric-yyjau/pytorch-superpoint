@@ -91,7 +91,8 @@ $DATA_DIR
     - Training usually takes 8-10 hours on one 'NVIDIA 2080Ti'.
     - Currently Support training on 'COCO' dataset (original paper), 'KITTI' dataset.
 - Tensorboard:
-    - log files is saved under 'runs/<export task>/...'
+    - log files is saved under 'runs/<\export_task>/...'
+    
 `tensorboard --logdir=./runs/ [--host | static_ip_address] [--port | 6008]`
 
 ### 1) Training MagicPoint on Synthetic Shapes
@@ -112,7 +113,7 @@ export_folder: <'train' | 'val'>  # set export for training or validation
 ```
 #### General command:
 ```
-python export.py <export task>  <config file>  <export folder>
+python export.py <export task>  <config file>  <export folder> [--outputImg | output images for visualization (space inefficient)]
 ```
 #### export coco - do on training set  (test: ok)
 ```
