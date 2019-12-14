@@ -169,7 +169,7 @@ python train4.py train_joint configs/superpoint_kitti_train_heatmap.yaml superpo
 
 ### 4) Export/ Evaluate the metrics on HPatches
 - Use pretrained model or specify your model in config file
-
+- ```./run_export.sh``` will run export then evaluation.
 
 #### Export
 - Export keypoints, descriptors, matching

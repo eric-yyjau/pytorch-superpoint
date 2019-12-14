@@ -1,3 +1,9 @@
+"""This is the main validation interface using heatmap trick
+
+Author: You-Yi Jau, Rui Zhu
+Date: 2019/12/12
+"""
+
 
 import numpy as np
 import torch

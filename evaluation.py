@@ -1,3 +1,9 @@
+"""evaluation script
+
+Author: You-Yi Jau, Rui Zhu
+Date: 2019/12/12
+"""
+
 import matplotlib
 matplotlib.use('Agg') # solve error of tk
 

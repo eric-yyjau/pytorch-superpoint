@@ -1,4 +1,5 @@
 """This is the frontend interface for training
+base class: inherited by other Train_model_*.py
 
 Author: You-Yi Jau, Rui Zhu
 Date: 2019/12/12

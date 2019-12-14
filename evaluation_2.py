@@ -1,3 +1,7 @@
+"""evaluation class (in progress)
+please refer to evaluation.py
+"""
+
 import numpy as np
 from evaluations.descriptor_evaluation import compute_homography
 from evaluations.detector_evaluation import compute_repeatability
