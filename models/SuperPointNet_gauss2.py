@@ -1,3 +1,7 @@
+"""latest version of SuperpointNet. Use it!
+
+"""
+
 import torch
 import torch.nn as nn
 from torch.nn.init import xavier_uniform_, zeros_

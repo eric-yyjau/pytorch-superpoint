@@ -1,3 +1,8 @@
+"""Old version of SuperpointNet. Use it together with 
+logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar
+
+"""
+
 import torch
 import torch.nn as nn
 from torch.nn.init import xavier_uniform_, zeros_
