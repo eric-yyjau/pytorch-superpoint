@@ -14,7 +14,6 @@ import torch.utils.data as data
 import random
 
 # from .base_dataset import BaseDataset
-from .utils import pipeline
 from settings import DATA_PATH, EXPER_PATH, KITTI_DATA_PATH
 from utils.tools import dict_update
 import cv2
@@ -26,7 +25,6 @@ from utils.utils import filter_points
 
 from datasets.Coco import Coco
 
-# from .utils import pipeline
 
 
 class Kitti_inh(Coco):

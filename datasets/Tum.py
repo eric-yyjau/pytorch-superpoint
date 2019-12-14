@@ -15,7 +15,6 @@ import torch.utils.data as data
 import random
 
 # from .base_dataset import BaseDataset
-from .utils import pipeline
 from settings import DATA_PATH, EXPER_PATH, KITTI_DATA_PATH
 from utils.tools import dict_update
 import cv2
@@ -31,7 +30,6 @@ import logging
 from tqdm import tqdm
 import glob
 
-# from .utils import pipeline
 # class Tum(Kitti):
 #     def __init__(self, export=False, transform=None, task='train', seed=0, sequence_length=1, **config):
 #         super(Tum, self).__init__()

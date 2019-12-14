@@ -19,8 +19,6 @@ import tarfile
 import random
 import logging
 
-# from .utils import pipeline
-# from .utils.pipeline import parse_primitives
 from utils.tools import dict_update
 
 from datasets import synthetic_dataset
