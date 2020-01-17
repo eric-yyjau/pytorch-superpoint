@@ -348,7 +348,9 @@ def inv_warp_image_batch(img, mat_homo_inv, device='cpu', mode='bilinear'):
     src_pixel_coords = src_pixel_coords.view([Batch, H, W, 2])
     src_pixel_coords = src_pixel_coords.float()
 
-    warped_img = F.grid_sample(img, src_pixel_coords, mode=mode, align_corners=True)
+    # warped_img = F.grid_sample(img, src_pixel_coords, mode=mode, align_corners=True)
+    warped_img = F.grid_sample(img, src_pixel_coords, mode=mode)
+    # print(f"warped_img: {warped_img.type()}")
     return warped_img
 
 def inv_warp_image(img, mat_homo_inv, device='cpu', mode='bilinear'):
