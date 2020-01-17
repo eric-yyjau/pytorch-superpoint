@@ -279,7 +279,7 @@ class Train_model_heatmap(Train_model_frontend):
                 loss_type=det_loss_type,
             )
         else:
-            loss_det_warp = torch.tensor([0]).to(self.device)
+            loss_det_warp = torch.tensor([0]).float().to(self.device)
 
 
         ## get labels, masks, loss for detection
