@@ -198,7 +198,7 @@ class Train_model_frontend(object):
             pass
         else:
             path = self.config["pretrained"]
-            mode = "" if path[:-3] == ".pth" else "full"
+            mode = "" if path[-4:] == ".pth" else "full" # the suffix is '.pth' or 'tar.gz'
             logging.info("load pretrained model from: %s", path)
             net, optimizer, n_iter = pretrainedLoader(
                 net, optimizer, n_iter, path, mode=mode, full_path=True

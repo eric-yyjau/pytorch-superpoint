@@ -103,14 +103,17 @@ class Kitti_inh(Coco):
         # shifts = list(range(-demi_length, demi_length + 1))
         # shifts.pop(demi_length)
         for scene in self.scenes:
-            intrinsics = (
-                np.genfromtxt(scene / "cam.txt").astype(np.float32).reshape((3, 3))
-            )
-            imu_pose_matrixs = (
-                np.genfromtxt(scene / "imu_pose_matrixs.txt")
-                .astype(np.float64)
-                .reshape(-1, 4, 4)
-            )
+            # intrinsics and imu_pose_matrixs are redundant for superpoint training
+            intrinsics = np.eye(3)
+            imu_pose_matrixs = np.eye(4)
+            # intrinsics = (
+            #     np.genfromtxt(scene / "cam.txt").astype(np.float32).reshape((3, 3))
+            # )
+            # imu_pose_matrixs = (
+            #     np.genfromtxt(scene / "imu_pose_matrixs.txt")
+            #     .astype(np.float64)
+            #     .reshape(-1, 4, 4)
+            # )
             # imgs = sorted(scene.files('*.jpg'))
 
             ##### test
