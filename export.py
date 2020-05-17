@@ -299,8 +299,6 @@ def export_detector_homoAdapt_gpu(config, output_dir, args):
         # sample = test_set[i]
         name = sample["name"][0]
         logging.info(f"name: {name}")
-        if task == "coco":
-            name = sample["name"][0]
         if check_exist:
             p = Path(save_output, "{}.npz".format(name))
             if p.exists():
@@ -346,7 +344,7 @@ def export_detector_homoAdapt_gpu(config, output_dir, args):
         if output_images:
             img_pts = draw_keypoints(img_2D * 255, pts.transpose())
             f = save_output / (str(count) + ".png")
-            if task == "coco" or "Kitti":
+            if task == "Coco" or "Kitti":
                 f = save_output / (name + ".png")
             saveImg(img_pts, str(f))
         count += 1
