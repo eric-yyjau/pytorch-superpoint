@@ -4,6 +4,8 @@ This is a PyTorch implementation of  "SuperPoint: Self-Supervised Interest Point
 This code is partially based on the tensorflow implementation
 https://github.com/rpautrat/SuperPoint.
 
+Please be generous to star this repo if it helps your research.
+
 ## Differences between our implementation and original paper
 - *Descriptor loss*: We tested descriptor loss using different methods, including dense method (as paper but slightly different) and sparse method. We notice sparse loss can converge more efficiently with similar performance. The default setting here is sparse method.
 
@@ -213,6 +215,18 @@ python export_classical.py export_descriptor configs/classical_descriptors.yaml 
 ## Work in progress
 - Release notebooks with unit testing.
 - Dataset: ApolloScape/ TUM.
+
+## Citations
+Please cite the original paper.
+```
+@inproceedings{detone2018superpoint,
+  title={Superpoint: Self-supervised interest point detection and description},
+  author={DeTone, Daniel and Malisiewicz, Tomasz and Rabinovich, Andrew},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops},
+  pages={224--236},
+  year={2018}
+}
+```
 
 # Credits
 This implementation is developed by [You-Yi Jau](https://github.com/eric-yyjau) and [Rui Zhu](https://github.com/Jerrypiglet). Please contact You-Yi for any problems. 
