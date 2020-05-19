@@ -573,8 +573,10 @@ def getPtsFromHeatmap(heatmap, conf_thresh, nms_dist):
     pts = pts[:, ~toremove]
     return pts
 
+# torchvision.ops.nms(boxes, scores, iou_threshold)
 def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
-    from mmdet.ops import nms as nms_mmdet # requires https://github.com/open-mmlab/mmdetection
+    # from mmdet.ops import nms as nms_mmdet # requires https://github.com/open-mmlab/mmdetection
+    from torchvision.ops import nms
 
     """Performs non maximum suppression on the heatmap by considering hypothetical
     bounding boxes centered at each pixel's location (e.g. corresponding to the receptive
@@ -593,21 +595,25 @@ def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
     size = torch.tensor(size/2.).cuda()
     boxes = torch.cat([pts-size, pts+size], dim=1) # [N, 4]
     scores = prob[pts[:, 0].long(), pts[:, 1].long()]
-    if keep_top_k != 0:
-        indices, _ = nms(boxes, scores, iou, min(boxes.size()[0], keep_top_k))
-    else:
-        # indices, _ = nms(boxes, scores, iou, boxes.size()[0])
-        # print("boxes: ", boxes.shape)
-        # print("scores: ", scores.shape)
-        proposals = torch.cat([boxes, scores.unsqueeze(-1)], dim=-1)
-        dets, indices = nms_mmdet(proposals, iou)
-        indices = indices.long()
+    
+    # if keep_top_k != 0:
+    #     indices, _ = nms(boxes, scores, iou, min(boxes.size()[0], keep_top_k))
+    # else:
+    #     # indices, _ = nms(boxes, scores, iou, boxes.size()[0])
+
+    #     proposals = torch.cat([boxes, scores.unsqueeze(-1)], dim=-1)
+    #     dets, indices = nms_mmdet(proposals, iou)
+    #     indices = indices.long()
+    
+    indices = nms(boxes, scores, iou)
+    indices = indices.long()
 
         # indices = box_nms_retinaNet(boxes, scores, iou)
     pts = torch.index_select(pts, 0, indices)
     scores = torch.index_select(scores, 0, indices)
     prob_nms[pts[:, 0].long(), pts[:, 1].long()] = scores
     return prob_nms
+
 
 def nms_fast(in_corners, H, W, dist_thresh):
     """
