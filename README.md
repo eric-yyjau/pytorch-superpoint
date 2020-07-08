@@ -206,6 +206,18 @@ python export_classical.py export_descriptor configs/classical_descriptors.yaml 
 ## Jupyter notebook 
 ```notebooks/visualize_hpatches.ipynb -- show images saved in the folders```
 
+## Packaging
+```python setup.py bdist_wheel```
+- Install to your local environment
+
+```pip install -e .```
+- Test import
+```
+python
+import superpoint
+```
+
+
 ## Known problems
 - test step 5: evaluate on SIFT
 - Export COCO dataset in low resolution (240x320) instead of high resolution (480x640).
