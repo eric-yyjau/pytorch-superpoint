@@ -1,7 +1,7 @@
 data:
     name: 'kitti'
     dataset: 'Kitti_inh' # 'Kitti'
-    root: /data/kitti/kitti_wVal
+    root: ./datasets/kitti_wVal # /data/kitti/kitti_wVal
     root_split_txt: 'datasets/kitti_split'   
     labels: logs/magicpoint_synth20_homoAdapt100_kitti_h384/predictions
 
