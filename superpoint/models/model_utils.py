@@ -120,7 +120,7 @@ class SuperPointNet_process(object):
         return coords
 
 
-    def heatmap_to_nms(self, heatmap, tensor=False, boxnms=True):
+    def heatmap_to_nms(self, heatmap, tensor=False):
         """
         return: 
           heatmap_nms_batch: np [batch, 1, H, W]
@@ -129,26 +129,17 @@ class SuperPointNet_process(object):
         from superpoint.utils.var_dim import toNumpy
         heatmap_np = toNumpy(heatmap)
         ## heatmap_nms
-        if boxnms:
-            from superpoint.utils.utils import box_nms
-            raise "box_nms is not working"
-            heatmap_nms_batch = [box_nms(h.detach().squeeze(), self.nms_dist, min_prob=self.conf_thresh) \
-                            for h in heatmap] # [batch, H, W]
-            heatmap_nms_batch = torch.stack(heatmap_nms_batch, dim=0).unsqueeze(1)
-            # print('heatmap_nms_batch: ', heatmap_nms_batch.shape)
-        else:
-            heatmap_nms_batch = [self.heatmap_nms(h, self.nms_dist, self.conf_thresh) \
+        heatmap_nms_batch = [self.heatmap_nms(h, self.nms_dist, self.conf_thresh) \
                             for h in heatmap_np] # [batch, H, W]
-            heatmap_nms_batch = np.stack(heatmap_nms_batch, axis=0)
-            heatmap_nms_batch = heatmap_nms_batch[:,np.newaxis,...]
-            if tensor:
-                heatmap_nms_batch = to_floatTensor(heatmap_nms_batch)
-                heatmap_nms_batch = heatmap_nms_batch.to(self.device)
+        heatmap_nms_batch = np.stack(heatmap_nms_batch, axis=0)
+        heatmap_nms_batch = heatmap_nms_batch[:,np.newaxis,...]
+        if tensor:
+            heatmap_nms_batch = to_floatTensor(heatmap_nms_batch)
+        heatmap_nms_batch = heatmap_nms_batch.to(self.device)
         self.heatmap = heatmap
         self.heatmap_nms_batch = heatmap_nms_batch
         return heatmap_nms_batch
         pass
-
 
     @staticmethod
     def heatmap_nms(heatmap, nms_dist=4, conf_thresh=0.015):
@@ -156,18 +147,14 @@ class SuperPointNet_process(object):
         input:
             heatmap: np [(1), H, W]
         """
+        from superpoint.utils.utils import getPtsFromHeatmap
         # nms_dist = self.config['model']['nms']
         # conf_thresh = self.config['model']['detection_threshold']
         heatmap = heatmap.squeeze()
-        boxnms = False
         # print("heatmap: ", heatmap.shape)
-        from superpoint.utils.utils import getPtsFromHeatmap
         pts_nms = getPtsFromHeatmap(heatmap, conf_thresh, nms_dist)
-
         semi_thd_nms_sample = np.zeros_like(heatmap)
         semi_thd_nms_sample[pts_nms[1, :].astype(np.int), pts_nms[0, :].astype(np.int)] = 1
-        
-        
         return semi_thd_nms_sample
 
 
@@ -205,5 +192,118 @@ class SuperPointNet_process(object):
         pts_int = torch.stack((pts_int), dim=0)
         pts_offset = torch.stack((pts_offset), dim=0)
         pts_desc = torch.stack((pts_desc), dim=0)
+        pts_int = set_nan2zero(pts_int)
+        pts_offset = set_nan2zero(pts_offset)
+        pts_desc = set_nan2zero(pts_desc)
         return {'pts_int': pts_int, 'pts_offset': pts_offset, 'pts_desc': pts_desc}
+
+
+
+# test runtime error
+# from model_utils import set_nan2zero
+def set_nan2zero(tens, name = 'network'):
+    """
+    # set nans in tensor to zeors. still need to check where the nans are!!!
+    # for tensors
+    """
+    mat_nans = (tens != tens)
+    n_nans = mat_nans.sum()
+    if n_nans > 0:
+        logging.warning(f"{name} include {n_nans} nans!!")
+    tens[mat_nans] = 0 
+    return tens
+
+# net.output['semi'] = torch.zeros((2,65,30,40)).cuda() * torch.tensor(np.nan).cuda()
+# net.output['semi'] = set_nan2zero(net.output['semi'], 'semi output')
+
+# outs_post = net.process_output(sp_processer)
+# print_dict_attr(outs_post, 'shape')
+
+    ## deprecared by youyi, 07/10/2020,
+    # def heatmap_to_nms(self, heatmap, tensor=False, boxnms=True):
+    #     """
+    #     return: 
+    #       heatmap_nms_batch: np [batch, 1, H, W]
+    #     """
+    #     to_floatTensor = lambda x: torch.from_numpy(x).type(torch.FloatTensor)
+    #     from superpoint.utils.var_dim import toNumpy
+    #     heatmap_np = toNumpy(heatmap)
+    #     ## heatmap_nms
+    #     if boxnms:
+    #         from superpoint.utils.utils import box_nms
+    #         raise "box_nms is not working"
+    #         heatmap_nms_batch = [box_nms(h.detach().squeeze(), self.nms_dist, min_prob=self.conf_thresh) \
+    #                         for h in heatmap] # [batch, H, W]
+    #         heatmap_nms_batch = torch.stack(heatmap_nms_batch, dim=0).unsqueeze(1)
+    #         # print('heatmap_nms_batch: ', heatmap_nms_batch.shape)
+    #     else:
+    #         heatmap_nms_batch = [self.heatmap_nms(h, self.nms_dist, self.conf_thresh) \
+    #                         for h in heatmap_np] # [batch, H, W]
+    #         heatmap_nms_batch = np.stack(heatmap_nms_batch, axis=0)
+    #         heatmap_nms_batch = heatmap_nms_batch[:,np.newaxis,...]
+    #         if tensor:
+    #             heatmap_nms_batch = to_floatTensor(heatmap_nms_batch)
+    #             heatmap_nms_batch = heatmap_nms_batch.to(self.device)
+    #     self.heatmap = heatmap
+    #     self.heatmap_nms_batch = heatmap_nms_batch
+    #     return heatmap_nms_batch
+    #     pass
+
+
+    # @staticmethod
+    # def heatmap_nms(heatmap, nms_dist=4, conf_thresh=0.015):
+    #     """
+    #     input:
+    #         heatmap: np [(1), H, W]
+    #     """
+    #     # nms_dist = self.config['model']['nms']
+    #     # conf_thresh = self.config['model']['detection_threshold']
+    #     heatmap = heatmap.squeeze()
+    #     boxnms = False
+    #     # print("heatmap: ", heatmap.shape)
+    #     from superpoint.utils.utils import getPtsFromHeatmap
+    #     pts_nms = getPtsFromHeatmap(heatmap, conf_thresh, nms_dist)
+
+    #     semi_thd_nms_sample = np.zeros_like(heatmap)
+    #     semi_thd_nms_sample[pts_nms[1, :].astype(np.int), pts_nms[0, :].astype(np.int)] = 1
+        
+        
+    #     return semi_thd_nms_sample
+
+
+    # def batch_extract_features(self, desc, heatmap_nms_batch, residual):
+    #     # extract pts, residuals for pts, descriptors
+    #     """
+    #     return: -- type: tensorFloat
+    #       pts: tensor [batch, N, 2] (no grad)  (x, y)
+    #       pts_offset: tensor [batch, N, 2] (grad) (x, y)
+    #       pts_desc: tensor [batch, N, 256] (grad)
+    #     """
+    #     batch_size = heatmap_nms_batch.shape[0]
+        
+    #     pts_int, pts_offset, pts_desc = [], [], []
+    #     pts_idx = heatmap_nms_batch[...].nonzero() # [N, 4(batch, 0, y, x)]
+    #     for i in range(batch_size):
+    #         mask_b = (pts_idx[:,0] == i) # first column == batch
+    #         pts_int_b = pts_idx[mask_b][:,2:].float() # default floatTensor
+    #         pts_int_b = pts_int_b[:, [1, 0]] # tensor [N, 2(x,y)]
+    #         res_b = residual[mask_b]
+    #         # print("res_b: ", res_b.shape)
+    #         # print("pts_int_b: ", pts_int_b.shape)
+    #         pts_b = pts_int_b + res_b # .no_grad()
+    #         # extract desc
+    #         pts_desc_b = self.sample_desc_from_points(desc[i].unsqueeze(0), pts_b).squeeze(0)
+    #         # print("pts_desc_b: ", pts_desc_b.shape)
+    #         # get random shuffle
+    #         from superpoint.utils.utils import crop_or_pad_choice
+    #         choice = crop_or_pad_choice(pts_int_b.shape[0], out_num_points=self.out_num_points, shuffle=True)
+    #         choice = torch.tensor(choice)
+    #         pts_int.append(pts_int_b[choice])
+    #         pts_offset.append(res_b[choice])
+    #         pts_desc.append(pts_desc_b[choice])
+
+    #     pts_int = torch.stack((pts_int), dim=0)
+    #     pts_offset = torch.stack((pts_offset), dim=0)
+    #     pts_desc = torch.stack((pts_desc), dim=0)
+    #     return {'pts_int': pts_int, 'pts_offset': pts_offset, 'pts_desc': pts_desc}
 

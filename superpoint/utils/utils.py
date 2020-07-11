@@ -120,8 +120,7 @@ def find_files_with_ext(directory, extension='.npz'):
                 # print(l)
         return list_of_files
 
-def save_checkpoint(save_path, net_state, epoch, filename='checkpoint.pth.tar'):
-    file_prefix = ['superPointNet']
+def save_checkpoint(save_path, net_state, epoch, filename='checkpoint.pth.tar', file_prefix = ['superPointNet']):
     # torch.save(net_state, save_path)
     filename = '{}_{}_{}'.format(file_prefix[0], str(epoch), filename)
     torch.save(net_state, save_path/filename)
@@ -573,6 +572,7 @@ def getPtsFromHeatmap(heatmap, conf_thresh, nms_dist):
     pts = pts[:, ~toremove]
     return pts
 
+# deprecated by youyi on 07/10/2020
 def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
     from mmdet.ops import nms as nms_mmdet # requires https://github.com/open-mmlab/mmdetection
 
