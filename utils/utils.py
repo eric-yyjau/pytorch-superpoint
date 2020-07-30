@@ -13,7 +13,7 @@ import datetime
 from collections import OrderedDict
 import torch.nn.functional as F
 import torch.nn as nn
-# from utils.nms_pytorch import nms
+from utils.nms_pytorch import nms
 ###### check
 # from utils.nms_pytorch import box_nms as box_nms_retinaNet
 from utils.d2s import DepthToSpace, SpaceToDepth
@@ -574,7 +574,9 @@ def getPtsFromHeatmap(heatmap, conf_thresh, nms_dist):
     return pts
 
 def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
-    from mmdet.ops import nms as nms_mmdet # requires https://github.com/open-mmlab/mmdetection
+    # requires https://github.com/open-mmlab/mmdetection. 
+    # Warning : BUILD FROM SOURCE using command MMCV_WITH_OPS=1 pip install -e
+    from mmcv.ops import nms as nms_mmdet 
 
     """Performs non maximum suppression on the heatmap by considering hypothetical
     bounding boxes centered at each pixel's location (e.g. corresponding to the receptive
