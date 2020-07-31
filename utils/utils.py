@@ -13,7 +13,6 @@ import datetime
 from collections import OrderedDict
 import torch.nn.functional as F
 import torch.nn as nn
-from utils.nms_pytorch import nms
 ###### check
 # from utils.nms_pytorch import box_nms as box_nms_retinaNet
 from utils.d2s import DepthToSpace, SpaceToDepth
