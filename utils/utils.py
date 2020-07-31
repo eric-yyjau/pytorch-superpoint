@@ -577,6 +577,7 @@ def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
     # requires https://github.com/open-mmlab/mmdetection. 
     # Warning : BUILD FROM SOURCE using command MMCV_WITH_OPS=1 pip install -e
     from mmcv.ops import nms as nms_mmdet 
+    from torchvision.ops import nms
 
     """Performs non maximum suppression on the heatmap by considering hypothetical
     bounding boxes centered at each pixel's location (e.g. corresponding to the receptive
@@ -596,7 +597,7 @@ def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
     boxes = torch.cat([pts-size, pts+size], dim=1) # [N, 4]
     scores = prob[pts[:, 0].long(), pts[:, 1].long()]
     if keep_top_k != 0:
-        indices, _ = nms(boxes, scores, iou, min(boxes.size()[0], keep_top_k))
+        indices = nms(boxes, scores, iou)
     else:
         # indices, _ = nms(boxes, scores, iou, boxes.size()[0])
         # print("boxes: ", boxes.shape)
