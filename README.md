@@ -1,10 +1,11 @@
-# torch-superpoint
+# pytorch-superpoint
 
 This is a PyTorch implementation of  "SuperPoint: Self-Supervised Interest Point Detection and Description." Daniel DeTone, Tomasz Malisiewicz, Andrew Rabinovich. [ArXiv 2018](https://arxiv.org/abs/1712.07629).
 This code is partially based on the tensorflow implementation
 https://github.com/rpautrat/SuperPoint.
 
 Please be generous to star this repo if it helps your research.
+This repo is a bi-product of our paper [deepFEPE(IROS 2020)](https://github.com/eric-yyjau/pytorch-deepFEPE.git).
 
 ## Differences between our implementation and original paper
 - *Descriptor loss*: We tested descriptor loss using different methods, including dense method (as paper but slightly different) and sparse method. We notice sparse loss can converge more efficiently with similar performance. The default setting here is sparse method.
@@ -225,6 +226,16 @@ Please cite the original paper.
   booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops},
   pages={224--236},
   year={2018}
+}
+```
+
+Please also cite our DeepFEPE paper.
+```
+@misc{2020_jau_zhu_deepFEPE,
+Author = {You-Yi Jau and Rui Zhu and Hao Su and Manmohan Chandraker},
+Title = {Deep Keypoint-Based Camera Pose Estimation with Geometric Constraints},
+Year = {2020},
+Eprint = {arXiv:2007.15122},
 }
 ```
 
