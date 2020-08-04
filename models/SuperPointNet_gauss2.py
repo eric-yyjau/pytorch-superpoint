@@ -105,7 +105,7 @@ def get_matches(deses_SP):
     f = lambda x: x.cpu().detach().numpy()
     # tracker = PointTracker(max_length=2, nn_thresh=1.2)
     # print("deses_SP[1]: ", deses_SP[1].shape)
-    matching_mask = tracker.nn_match_two_way(f(deses_SP[0]), f(deses_SP[1]), nn_thresh=1.2)
+    matching_mask = tracker.nn_match_two_way(f(deses_SP[0]).T, f(deses_SP[1]).T, nn_thresh=1.2)
     return matching_mask
 
     # print("matching_mask: ", matching_mask.shape)
