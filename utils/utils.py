@@ -575,7 +575,7 @@ def getPtsFromHeatmap(heatmap, conf_thresh, nms_dist):
 def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
     # requires https://github.com/open-mmlab/mmdetection. 
     # Warning : BUILD FROM SOURCE using command MMCV_WITH_OPS=1 pip install -e
-    from mmcv.ops import nms as nms_mmdet 
+    # from mmcv.ops import nms as nms_mmdet 
     from torchvision.ops import nms
 
     """Performs non maximum suppression on the heatmap by considering hypothetical
@@ -598,12 +598,13 @@ def box_nms(prob, size, iou=0.1, min_prob=0.01, keep_top_k=0):
     if keep_top_k != 0:
         indices = nms(boxes, scores, iou)
     else:
+        raise NotImplementedError
         # indices, _ = nms(boxes, scores, iou, boxes.size()[0])
         # print("boxes: ", boxes.shape)
         # print("scores: ", scores.shape)
-        proposals = torch.cat([boxes, scores.unsqueeze(-1)], dim=-1)
-        dets, indices = nms_mmdet(proposals, iou)
-        indices = indices.long()
+        # proposals = torch.cat([boxes, scores.unsqueeze(-1)], dim=-1)
+        # dets, indices = nms_mmdet(proposals, iou)
+        # indices = indices.long()
 
         # indices = box_nms_retinaNet(boxes, scores, iou)
     pts = torch.index_select(pts, 0, indices)

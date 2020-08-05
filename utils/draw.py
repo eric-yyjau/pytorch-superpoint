@@ -95,7 +95,8 @@ def draw_keypoints(img, corners, color=(0, 255, 0), radius=3, s=3):
 #         cv2.circle(img, tuple((s*c[:2]).astype(int)), radius, color, thickness=-1)
 #     return img
 
-def draw_matches(rgb1, rgb2, match_pairs, filename='matches.png', show=False):
+def draw_matches(rgb1, rgb2, match_pairs, lw = 0.5, color='g', if_fig=True,
+                filename='matches.png', show=False):
     '''
 
     :param rgb1:
@@ -117,7 +118,10 @@ def draw_matches(rgb1, rgb2, match_pairs, filename='matches.png', show=False):
     canvas[:h1, :w1] = rgb1[:,:,np.newaxis]
     canvas[:h2, w1:] = rgb2[:,:,np.newaxis]
     # fig = plt.figure(frameon=False)
-    fig = plt.imshow(canvas)
+    if if_fig:
+        fig = plt.figure(figsize=(15,5))
+    plt.axis("off")
+    plt.imshow(canvas, zorder=1)
 
     xs = match_pairs[:, [0, 2]]
     xs[:, 1] += w1
@@ -125,7 +129,7 @@ def draw_matches(rgb1, rgb2, match_pairs, filename='matches.png', show=False):
 
     alpha = 1
     sf = 5
-    lw = 0.5
+    # lw = 0.5
     # markersize = 1
     markersize = 2
 
@@ -138,13 +142,18 @@ def draw_matches(rgb1, rgb2, match_pairs, filename='matches.png', show=False):
         marker='o',
         markersize=markersize,
         fillstyle='none',
-        color=[0.0, 0.8, 0.0],
+        color=color,
+        zorder=2,
+        # color=[0.0, 0.8, 0.0],
     );
     plt.tight_layout()
-    plt.savefig(filename, dpi=300, bbox_inches='tight')
+    if filename is not None:
+        plt.savefig(filename, dpi=300, bbox_inches='tight')
     print('#Matches = {}'.format(len(match_pairs)))
     if show:
         plt.show()
+
+
 
 # from utils.draw import draw_matches_cv
 def draw_matches_cv(data):

@@ -172,6 +172,8 @@ def evaluate(args, **options):
 
                     desc = data['desc']
                     warped_desc = data['warped_desc']
+                    print(f"desc: {desc.shape}")
+                    print(f"warped_desc: {warped_desc.shape}")
 
                     nn_thresh = 1.2
                     print("nn threshold: ", nn_thresh)

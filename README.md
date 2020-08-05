@@ -15,7 +15,7 @@ This repo is a bi-product of our paper [deepFEPE(IROS 2020)](https://github.com/
 |-------------------------------------------|-----------------------|------|------|-----------------|------|-------------------|----------------|
 |                                           | Epsilon = 1           | 3    | 5    | Repeatability   | MLE  | NN mAP            | Matching Score |
 | Pretrained model                        | 0.44                  | 0.77 | 0.83 | 0.606           | 1.14 | 0.81              | 0.55           |
-| Sift (subpixel accuracy)                  | 0.63                  | 0.76 | 0.79 | 0.51            | 1.16 | -                 | -              |
+| Sift (subpixel accuracy)                  | 0.63                  | 0.76 | 0.79 | 0.51            | 1.16 | 0.70               | 0.27            |
 | superpoint_coco_heat2_0_170k_hpatches_sub | 0.46                  | 0.75 | 0.81 | 0.63            | 1.07 | 0.78              | 0.42           |
 | superpoint_kitti_heat2_0_50k_hpatches_sub | 0.44                  | 0.71 | 0.77 | 0.56            | 0.95 | 0.78              | 0.41           |
 
@@ -188,8 +188,12 @@ python evaluation.py logs/superpoint_hpatches_test/predictions --repeatibility -
 ```
 
 ### 5) Export/ Evaluate repeatability on SIFT (not tested)
-```
+```shell
+# export detection, description, matching
 python export_classical.py export_descriptor configs/classical_descriptors.yaml sift_test --correspondence
+
+# evaluate
+python evaluation.py logs/sift_test/predictions --repeatibility --homography
 ```
 
 
@@ -205,10 +209,19 @@ python export_classical.py export_descriptor configs/classical_descriptors.yaml 
 ```pretrained/superpoint_v1.pth```
 
 ## Jupyter notebook 
-```notebooks/visualize_hpatches.ipynb -- show images saved in the folders```
+```shell
+# show images saved in the folders
+jupyter notebook
+notebooks/visualize_hpatches.ipynb 
+```
+
+## Updates (year.month.day)
+- 2020.08.05: 
+  - updated boxnms to torchvision nms (not yet tested)
+  - tested step (5) ok
 
 ## Known problems
-- test step 5: evaluate on SIFT
+- ~~test step 5: evaluate on SIFT~~
 - Export COCO dataset in low resolution (240x320) instead of high resolution (480x640).
 - Due to step 1 was done long time ago. We are still testing it again along with step 2-4. Please refer to our pretrained model or exported labels. Or let us know how the whole pipeline works.
 - Warnings from tensorboard.
