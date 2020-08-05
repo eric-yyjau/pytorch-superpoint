@@ -218,8 +218,9 @@ notebooks/visualize_hpatches.ipynb
 
 ## Updates (year.month.day)
 - 2020.08.05: 
-  - updated boxnms to torchvision nms (not yet tested)
-  - tested step (5) ok
+  - Update pytorch nms from (https://github.com/eric-yyjau/pytorch-superpoint/pull/19)
+  - Update and test KITTI dataloader and labels on google drive (should be able to fit the KITTI raw format)
+  - Update and test SIFT evaluate at step 5.
 
 ## Known problems
 - ~~test step 5: evaluate on SIFT~~
