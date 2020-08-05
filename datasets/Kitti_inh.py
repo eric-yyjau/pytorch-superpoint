@@ -139,7 +139,7 @@ class Kitti_inh(Coco):
                 # sample = {'intrinsics': intrinsics, 'imu_pose_matrixs': [imu_pose_matrixs[i]], 'imgs': [imgs[i]], 'Xs': [load_as_array(X_files[i])], 'scene_name': scene.name, 'frame_ids': [i]}
                 if self.labels:
                     p = Path(self.labels_path, scene.name, "{}.npz".format(names[i]))
-                    print(f"label Path: {p}")
+                    # print(f"label Path: {p}")
                     if p.exists():
                         sample = {
                             "intrinsics": intrinsics,
