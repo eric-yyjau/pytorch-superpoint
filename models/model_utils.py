@@ -120,7 +120,7 @@ class SuperPointNet_process(object):
         return coords
 
 
-    def heatmap_to_nms(self, heatmap, tensor=False, boxnms=True):
+    def heatmap_to_nms(self, heatmap, tensor=False, boxnms=False):
         """
         return: 
           heatmap_nms_batch: np [batch, 1, H, W]
