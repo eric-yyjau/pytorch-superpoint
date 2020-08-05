@@ -440,8 +440,8 @@ class PointTracker(object):
         that the NN match from descriptor A->B must equal the NN match from B->A.
 
         Inputs:
-          desc1 - NxM numpy matrix of N corresponding M-dimensional descriptors.
-          desc2 - NxM numpy matrix of N corresponding M-dimensional descriptors.
+          desc1 - MxN numpy matrix of N corresponding M-dimensional descriptors.
+          desc2 - MxN numpy matrix of N corresponding M-dimensional descriptors.
           nn_thresh - Optional descriptor distance below which is a good match.
 
         Returns:
