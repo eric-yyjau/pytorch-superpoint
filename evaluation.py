@@ -1,7 +1,8 @@
-"""evaluation script
+"""Script for evaluation
+This is the evaluation script for image denoising project.
 
-Author: You-Yi Jau, Rui Zhu
-Date: 2019/12/12
+Author: You-Yi Jau, Yiqian Wang
+Date: 2020/03/30
 """
 
 import matplotlib
@@ -17,17 +18,25 @@ import logging
 import os
 from tqdm import tqdm
 from utils.draw import plot_imgs
+from utils.logging import *
 
+def draw_matches_cv(data, matches, plot_points=True):
+    if plot_points:
+        keypoints1 = [cv2.KeyPoint(p[1], p[0], 1) for p in data['keypoints1']]
+        keypoints2 = [cv2.KeyPoint(p[1], p[0], 1) for p in data['keypoints2']]
+    else:
+        matches_pts = data['matches']
+        keypoints1 = [cv2.KeyPoint(p[0], p[1], 1) for p in matches_pts]
+        keypoints2 = [cv2.KeyPoint(p[2], p[3], 1) for p in matches_pts]
+        print(f"matches_pts: {matches_pts}")
+        # keypoints1, keypoints2 = [], []
 
-def draw_matches_cv(data):
-    keypoints1 = [cv2.KeyPoint(p[1], p[0], 1) for p in data['keypoints1']]
-    keypoints2 = [cv2.KeyPoint(p[1], p[0], 1) for p in data['keypoints2']]
     inliers = data['inliers'].astype(bool)
-    matches = np.array(data['matches'])[inliers].tolist()
+    # matches = np.array(data['matches'])[inliers].tolist()
+    # matches = matches[inliers].tolist()
     def to3dim(img):
         if img.ndim == 2:
             img = img[:, :, np.newaxis]
-        img = img.astype('uint8')
         return img
     img1 = to3dim(data['image1'])
     img2 = to3dim(data['image2'])
@@ -36,7 +45,14 @@ def draw_matches_cv(data):
     return cv2.drawMatches(img1, keypoints1, img2, keypoints2, matches,
                            None, matchColor=(0,255,0), singlePointColor=(0, 0, 255))
 
-def find_files_with_ext(directory, extension='.npz'):
+def isfloat(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+
+def find_files_with_ext(directory, extension='.npz', if_int=True):
     # print(os.listdir(directory))
     list_of_files = []
     import os
@@ -45,7 +61,9 @@ def find_files_with_ext(directory, extension='.npz'):
             if l.endswith(extension):
                 list_of_files.append(l)
                 # print(l)
-        return list_of_files
+    if if_int:
+        list_of_files = [e for e in list_of_files if isfloat(e[:-4])]
+    return list_of_files
 
 
 def to3dim(img):
@@ -58,6 +76,7 @@ def evaluate(args, **options):
     path = args.path
     files = find_files_with_ext(path)
     correctness = []
+    est_H_mean_dist = []
     repeatability = []
     mscore = []
     mAP = []
@@ -69,6 +88,12 @@ def evaluate(args, **options):
     verbose = True
     top_K = 1000
     print("top_K: ", top_K)
+
+    reproduce = True
+    if reproduce:
+        logging.info("reproduce = True")
+        np.random.seed(0)
+        print(f"test random # : np({np.random.rand(1)})")
 
 
     # create output dir
@@ -82,6 +107,7 @@ def evaluate(args, **options):
 
     # for i in range(2):
     #     f = files[i]
+    print(f"file: {files[0]}")
     files.sort(key=lambda x: int(x[:-4]))
     from numpy.linalg import norm
     from utils.draw import draw_keypoints
@@ -136,10 +162,11 @@ def evaluate(args, **options):
         if args.homography:
             # estimate result
             ##### check
-            homography_thresh = [1,3,5]
+            homography_thresh = [1,3,5,10,20,50]
             #####
             result = compute_homography(data, correctness_thresh=homography_thresh)
             correctness.append(result['correctness'])
+            # est_H_mean_dist.append(result['mean_dist'])
             # compute matching score
             def warpLabels(pnts, homography, H, W):
                 import torch
@@ -172,8 +199,6 @@ def evaluate(args, **options):
 
                     desc = data['desc']
                     warped_desc = data['warped_desc']
-                    print(f"desc: {desc.shape}")
-                    print(f"warped_desc: {warped_desc.shape}")
 
                     nn_thresh = 1.2
                     print("nn threshold: ", nn_thresh)
@@ -238,7 +263,12 @@ def evaluate(args, **options):
                 def flipArr(arr):
                     return arr.max() - arr
                 
-                matches, mscores = getMatches(data)
+                if args.sift:
+                    assert result is not None
+                    matches, mscores = result['matches'], result['mscores']
+                else:
+                    matches, mscores = getMatches(data)
+                
                 real_H = data['homography']
                 if inliers_method == 'gt':
                     # use ground truth homography
@@ -249,7 +279,11 @@ def evaluate(args, **options):
                     print("use opencv estimation for inliers")
                     inliers = getInliers_cv(matches, real_H, epi=3, verbose=verbose)
                     
-                m_flip = flipArr(mscores[:,2])
+                ## distance to confidence
+                if args.sift:
+                    m_flip = flipArr(mscores[:])  # for sift
+                else:
+                    m_flip = flipArr(mscores[:,2])
         
                 if inliers.shape[0] > 0 and inliers.sum()>0:
 #                     m_flip = flipArr(m_flip)
@@ -281,12 +315,25 @@ def evaluate(args, **options):
                 plot_imgs([img1, img2, warped_img1], titles=['img1', 'img2', 'warped_img1'], dpi=200)
                 plt.tight_layout()
                 plt.savefig(path_warp + '/' + f_num + '.png')
+
+                ## plot filtered image
+                img1, img2 = data['image'], data['warped_image']
+                warped_img1 = cv2.warpPerspective(img1, H, (img2.shape[1], img2.shape[0]))
+                plot_imgs([img1, img2, warped_img1], titles=['img1', 'img2', 'warped_img1'], dpi=200)
+                plt.tight_layout()
+                # plt.savefig(path_warp + '/' + f_num + '_fil.png')
+                plt.savefig(path_warp + '/' + f_num + '.png')
+
                 # plt.show()
 
                 # draw matches
                 result['image1'] = image
                 result['image2'] = warped_image
-                img = draw_matches_cv(result)
+                matches = np.array(result['cv2_matches'])
+                ratio = 0.2
+                ran_idx = np.random.choice(matches.shape[0], int(matches.shape[0]*ratio))
+
+                img = draw_matches_cv(result, matches[ran_idx], plot_points=True)
                 # filename = "correspondence_visualization"
                 plot_imgs([img], titles=["Two images feature correspondences"], dpi=200)
                 plt.tight_layout()
@@ -295,11 +342,32 @@ def evaluate(args, **options):
                 # pltImshow(img)
 
         if args.plotMatching:
-            matches = data['matches']
+            matches = result['matches'] # np [N x 4]
             if matches.shape[0] > 0:
                 from utils.draw import draw_matches
                 filename = path_match + '/' + f_num + 'm.png'
-                draw_matches(image, warped_image, matches, filename=filename)
+                ratio = 0.1
+                inliers = result['inliers']
+
+                matches_in = matches[inliers == True]
+                matches_out = matches[inliers == False]
+
+                def get_random_m(matches, ratio):
+                    ran_idx = np.random.choice(matches.shape[0], int(matches.shape[0]*ratio))               
+                    return matches[ran_idx], ran_idx
+                image = data['image']
+                warped_image = data['warped_image']
+                ## outliers
+                matches_temp, _ = get_random_m(matches_out, ratio)
+                # print(f"matches_in: {matches_in.shape}, matches_temp: {matches_temp.shape}")
+                draw_matches(image, warped_image, matches_temp, lw=0.5, color='r',
+                            filename=None, show=False, if_fig=True)
+                ## inliers
+                matches_temp, _ = get_random_m(matches_in, ratio)
+                draw_matches(image, warped_image, matches_temp, lw=1.0, 
+                        filename=filename, show=False, if_fig=False)
+
+
 
 
 
@@ -311,8 +379,10 @@ def evaluate(args, **options):
         print("localization error over ", len(localization_err), " images : ", localization_err_m)
     if args.homography:
         correctness_ave = np.array(correctness).mean(axis=0)
+        # est_H_mean_dist = np.array(est_H_mean_dist)
         print("homography estimation threshold", homography_thresh)
         print("correctness_ave", correctness_ave)
+        # print(f"mean est H dist: {est_H_mean_dist.mean()}")
         mscore_m = np.array(mscore).mean(axis=0)
         print("matching score", mscore_m)
         if compute_map:
@@ -335,6 +405,9 @@ def evaluate(args, **options):
             myfile.write("Homography estimation: " + '\n')
             myfile.write("Homography threshold: " + str(homography_thresh) + '\n')
             myfile.write("Average correctness: " + str(correctness_ave) + '\n')
+
+            # myfile.write("mean est H dist: " + str(est_H_mean_dist.mean()) + '\n')
+
             if compute_map:
                 myfile.write("nn mean AP: " + str(mAP_m) + '\n')
             myfile.write("matching score: " + str(mscore_m) + '\n')
@@ -357,6 +430,23 @@ def evaluate(args, **options):
                 myfile.write('\n')
             myfile.write("======== end ========" + '\n')
 
+    dict_of_lists = {
+        'repeatability': repeatability,
+        'localization_err': localization_err,
+        'correctness': np.array(correctness),
+        'homography_thresh': homography_thresh,
+        'mscore': mscore,
+        'mAP': np.array(mAP),
+        # 'est_H_mean_dist': est_H_mean_dist
+    }
+
+    filename = f'{save_file[:-4]}.npz'
+    logging.info(f"save file: {filename}")
+    np.savez(
+        filename,
+        **dict_of_lists,
+    )
+
 
 if __name__ == '__main__':
     import argparse
@@ -366,6 +456,7 @@ if __name__ == '__main__':
                         datefmt='%m/%d/%Y %H:%M:%S', level=logging.INFO)
     parser = argparse.ArgumentParser()
     parser.add_argument('path', type=str)
+    parser.add_argument('--sift', action='store_true', help='use sift matches')
     parser.add_argument('-o', '--outputImg', action='store_true')
     parser.add_argument('-r', '--repeatibility', action='store_true')
     parser.add_argument('-homo', '--homography', action='store_true')
