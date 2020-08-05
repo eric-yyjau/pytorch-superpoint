@@ -39,13 +39,13 @@ pip install -r requirements_torch.txt # install pytorch
 ```
 
 ### Path setting
-- paths for datasets, logs are set in `setting.py`
+- paths for datasets ($DATA_DIR), logs are set in `setting.py`
 
 ### Dataset
 Datasets should be downloaded into $DATA_DIR. The Synthetic Shapes dataset will also be generated there. The folder structure should look like:
 
 ```
-$DATA_DIR
+datasets/ ($DATA_DIR)
 |-- COCO
 |   |-- train2014
 |   |   |-- file1.jpg
@@ -192,8 +192,8 @@ python evaluation.py logs/superpoint_hpatches_test/predictions --repeatibility -
 # export detection, description, matching
 python export_classical.py export_descriptor configs/classical_descriptors.yaml sift_test --correspondence
 
-# evaluate
-python evaluation.py logs/sift_test/predictions --repeatibility --homography
+# evaluate (use 'sift' flag)
+python evaluation.py logs/sift_test/predictions --sift --repeatibility --homography 
 ```
 
 
