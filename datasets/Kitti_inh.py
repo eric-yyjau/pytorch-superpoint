@@ -79,8 +79,13 @@ class Kitti_inh(Coco):
             else self.root_split_txt / "val.txt"
         )
         self.scenes = [
-            Path(self.root / folder[:-1]) for folder in open(scene_list_path)
+            # (label folder, raw image path)
+            (Path(self.root / folder[:-1]), Path(self.root / folder[:-4] / 'image_02' / 'data') ) \
+                for folder in open(scene_list_path)
         ]
+        # self.scenes_imgs = [
+        #     Path(self.root / folder[:-4] / 'image_02' / 'data') for folder in open(scene_list_path)
+        # ]
 
         ## only for export??
 
@@ -102,10 +107,10 @@ class Kitti_inh(Coco):
         demi_length = sequence_length - 1
         # shifts = list(range(-demi_length, demi_length + 1))
         # shifts.pop(demi_length)
-        for scene in self.scenes:
+        for (scene, scene_img_folder) in self.scenes:
             # intrinsics and imu_pose_matrixs are redundant for superpoint training
             intrinsics = np.eye(3)
-            imu_pose_matrixs = np.eye(4)
+            # imu_pose_matrixs = np.eye(4)
             # intrinsics = (
             #     np.genfromtxt(scene / "cam.txt").astype(np.float32).reshape((3, 3))
             # )
@@ -116,15 +121,14 @@ class Kitti_inh(Coco):
             # )
             # imgs = sorted(scene.files('*.jpg'))
 
-            ##### test
-            image_paths = list(scene.iterdir())
+            ##### get images
+            # print(f"scene_img_folder: {scene_img_folder}")
+            image_paths = list(scene_img_folder.iterdir())
             names = [p.stem for p in image_paths]
-            image_paths = [str(p) for p in image_paths]
-            files = {"image_paths": image_paths, "names": names}
+            imgs = [str(p) for p in image_paths]
+            # files = {"image_paths": image_paths, "names": names}
             #####
 
-            imgs = sorted(scene.glob("*.jpg"))
-            names = [p.stem for p in imgs]
 
             # X_files = sorted(scene.glob('*.npy'))
             if len(imgs) < sequence_length:
@@ -135,10 +139,11 @@ class Kitti_inh(Coco):
                 # sample = {'intrinsics': intrinsics, 'imu_pose_matrixs': [imu_pose_matrixs[i]], 'imgs': [imgs[i]], 'Xs': [load_as_array(X_files[i])], 'scene_name': scene.name, 'frame_ids': [i]}
                 if self.labels:
                     p = Path(self.labels_path, scene.name, "{}.npz".format(names[i]))
+                    print(f"label Path: {p}")
                     if p.exists():
                         sample = {
                             "intrinsics": intrinsics,
-                            "imu_pose_matrixs": [imu_pose_matrixs[i]],
+                            # "imu_pose_matrixs": [imu_pose_matrixs[i]],
                             "image": [imgs[i]],
                             "scene_name": scene.name,
                             "frame_ids": [i],
@@ -147,7 +152,7 @@ class Kitti_inh(Coco):
                 else:
                     sample = {
                         "intrinsics": intrinsics,
-                        "imu_pose_matrixs": [imu_pose_matrixs[i]],
+                        # "imu_pose_matrixs": [imu_pose_matrixs[i]],
                         "imgs": [imgs[i]],
                         "scene_name": scene.name,
                         "frame_ids": [i],
@@ -158,7 +163,7 @@ class Kitti_inh(Coco):
                     # for j in shifts:
                     for j in range(1, demi_length + 1):
                         sample["image"].append(imgs[i + j])
-                        sample["imu_pose_matrixs"].append(imu_pose_matrixs[i + j])
+                        # sample["imu_pose_matrixs"].append(imu_pose_matrixs[i + j])
                         # sample['Xs'].append(load_as_array(X_files[i])) # [3, N]
                         sample["frame_ids"].append(i + j)
                     sequence_set.append(sample)

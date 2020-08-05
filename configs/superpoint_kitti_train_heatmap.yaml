@@ -1,9 +1,9 @@
 data:
     name: 'kitti'
     dataset: 'Kitti_inh' # 'Kitti'
-    root: /data/kitti/kitti_wVal
+    root:  './datasets/KITTI/' # /data/kitti/kitti_wVal
     root_split_txt: 'datasets/kitti_split'   
-    labels: logs/magicpoint_synth20_homoAdapt100_kitti_h384/predictions
+    labels: logs/magicpoint_synth20_homoAdapt100_kitti_h384_labels/predictions
 
     gaussian_label:
         enable: true
