@@ -187,7 +187,8 @@ python export.py export_descriptor  configs/magicpoint_repeatability_heatmap.yam
 python evaluation.py logs/superpoint_hpatches_test/predictions --repeatibility --outputImg --homography --plotMatching
 ```
 
-### 5) Export/ Evaluate repeatability on SIFT (not tested)
+### 5) Export/ Evaluate repeatability on SIFT
+- Refer to another project: [Feature-preserving image denoising with multiresolution filters](https://github.com/eric-yyjau/image_denoising_matching)
 ```shell
 # export detection, description, matching
 python export_classical.py export_descriptor configs/classical_descriptors.yaml sift_test --correspondence
