@@ -209,6 +209,7 @@ def export_detector_homoAdapt_gpu(config, output_dir, args):
     export_task = config["data"]["export_folder"]
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+    logging.info(f"Dataset: {task}")
     logging.info("train on device: %s", device)
     with open(os.path.join(output_dir, "config.yml"), "w") as f:
         yaml.dump(config, f, default_flow_style=False)
@@ -333,12 +334,16 @@ def export_detector_homoAdapt_gpu(config, output_dir, args):
 
         ## - make directories
         filename = str(name)
-        if task == "Kitti" or "Kitti_inh":
-            scene_name = sample["scene_name"][0]
-            os.makedirs(Path(save_output, scene_name), exist_ok=True)
-
-        path = Path(save_output, "{}.npz".format(filename))
-        np.savez_compressed(path, **pred)
+        # if task == "Kitti" or "Kitti_inh":
+        #     scene_name = sample["scene_name"][0]
+        #     # os.makedirs(Path(save_output, scene_name), exist_ok=True)
+        #     # Path(save_output, scene_name).mkdir(parents=True, exist_ok=True)
+        #     print(f"save_output: {save_output}/{scene_name}")
+        #     Path(f"{save_output}/{scene_name}").mkdir(parents=True, exist_ok=True)
+        file = Path(save_output/f"{filename}.npz")
+        print(f"file: {file}")
+        file.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(file, **pred)
 
         ## output images for visualization labels
         if output_images:
