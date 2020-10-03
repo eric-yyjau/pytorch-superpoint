@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
 from tqdm import tqdm
-from utils.loader import dataLoader, modelLoader, pretrainedLoader
+from .utils.loader import dataLoader, modelLoader, pretrainedLoader
 import logging
 
 from .utils.tools import dict_update
