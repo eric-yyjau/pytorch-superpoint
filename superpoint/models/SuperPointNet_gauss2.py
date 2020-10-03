@@ -5,7 +5,7 @@
 import torch
 import torch.nn as nn
 from torch.nn.init import xavier_uniform_, zeros_
-from models.unet_parts import *
+from .unet_parts import *
 import numpy as np
 
 # from models.SubpixelNet import SubpixelNet
