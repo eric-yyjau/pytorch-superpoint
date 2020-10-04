@@ -16,15 +16,15 @@ import torch.utils.data
 # from utils.loader import dataLoader, modelLoader, pretrainedLoader
 import logging
 
-from utils.tools import dict_update
+from superpoint.utils.tools import dict_update
 
 # from utils.utils import labels2Dto3D, flattenDetection, labels2Dto3D_flattened
 # from utils.utils import pltImshow, saveImg
-from utils.utils import precisionRecall_torch
+from superpoint.utils.utils import precisionRecall_torch
 # from utils.utils import save_checkpoint
 
 from pathlib import Path
-from Train_model_frontend import Train_model_frontend
+from superpoint.Train_model_frontend import Train_model_frontend
 
 
 def thd_img(img, thd=0.015):
