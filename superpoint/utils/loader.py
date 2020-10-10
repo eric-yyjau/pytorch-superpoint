@@ -153,7 +153,7 @@ def get_module(path, name):
     return getattr(mod, name)
 
 def get_model(name):
-    mod = __import__('models.{}'.format(name), fromlist=[''])
+    mod = __import__('superpoint.models.{}'.format(name), fromlist=[''])
     return getattr(mod, name)
 
 def modelLoader(model='SuperPointNet', **options):

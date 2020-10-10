@@ -1,9 +1,9 @@
-import utils.correspondence_tools.correspondence_finder as correspondence_finder
+import superpoint.utils.correspondence_tools.correspondence_finder as correspondence_finder
 import numpy as np
 import torch
 
-from utils.homographies import scale_homography_torch
-from utils.loss_functions.pixelwise_contrastive_loss import PixelwiseContrastiveLoss
+from superpoint.utils.homographies import scale_homography_torch
+from superpoint.utils.loss_functions.pixelwise_contrastive_loss import PixelwiseContrastiveLoss
 
 def get_coor_cells(Hc, Wc, cell_size, device='cpu', uv=False):
     coor_cells = torch.stack(torch.meshgrid(torch.arange(Hc), torch.arange(Wc)), dim=2)

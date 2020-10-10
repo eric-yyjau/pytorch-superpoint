@@ -88,16 +88,16 @@ class Train_model_heatmap(Train_model_frontend):
         if self.config["data"]["gaussian_label"]["enable"]:
             self.gaussian = True
 
-        if self.config["model"]["dense_loss"]["enable"]:
+        if self.config["model"]["dense_loss"]["enable"]: # deprecated
             print("use dense_loss!")
-            from utils.utils import descriptor_loss
+            from superpoint.tils.utils import descriptor_loss
             self.desc_params = self.config["model"]["dense_loss"]["params"]
             self.descriptor_loss = descriptor_loss
             self.desc_loss_type = "dense"
         elif self.config["model"]["sparse_loss"]["enable"]:
             print("use sparse_loss!")
             self.desc_params = self.config["model"]["sparse_loss"]["params"]
-            from utils.loss_functions.sparse_loss import batch_descriptor_loss_sparse
+            from superpoint.utils.loss_functions.sparse_loss import batch_descriptor_loss_sparse
 
             self.descriptor_loss = batch_descriptor_loss_sparse
             self.desc_loss_type = "sparse"

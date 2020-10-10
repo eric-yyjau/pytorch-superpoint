@@ -7,7 +7,7 @@ from math import pi
 import cv2
 import numpy as np
 
-from utils.tools import dict_update
+from superpoint.utils.tools import dict_update
 
 def sample_homography_np(
         shape, shift=0, perspective=True, scaling=True, rotation=True, translation=True,
