@@ -335,7 +335,7 @@ def export_detector_homoAdapt_gpu(config, output_dir, args):
         filename = str(name)
         if task == "Kitti" or "Kitti_inh":
             scene_name = sample["scene_name"][0]
-            os.makedirs(Path(save_output, scene_name), exist_ok=True)
+            os.makedirs(Path(save_output, filename).parent, exist_ok=True)
 
         path = Path(save_output, "{}.npz".format(filename))
         np.savez_compressed(path, **pred)

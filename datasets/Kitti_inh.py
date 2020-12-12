@@ -73,6 +73,7 @@ class Kitti_inh(Coco):
         self.root_split_txt = Path(
             self.root if root_split_txt is None else root_split_txt
         )
+        print(f"root_split_txt: {root_split_txt}")
         scene_list_path = (
             self.root_split_txt / "train.txt"
             if task == "train"
@@ -123,7 +124,8 @@ class Kitti_inh(Coco):
 
             ##### get images
             # print(f"scene_img_folder: {scene_img_folder}")
-            image_paths = list(scene_img_folder.iterdir())
+            #image_paths = list(scene_img_folder.iterdir())
+            image_paths = list(scene.iterdir())
             names = [p.stem for p in image_paths]
             imgs = [str(p) for p in image_paths]
             # files = {"image_paths": image_paths, "names": names}
