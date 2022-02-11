@@ -131,7 +131,7 @@ if __name__ == '__main__':
                         datefmt='%m/%d/%Y %H:%M:%S', level=logging.DEBUG)
 
     with open(args.config, 'r') as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
     # EXPER_PATH from settings.py
     output_dir = os.path.join(EXPER_PATH, args.exper_name)
     os.makedirs(output_dir, exist_ok=True)
