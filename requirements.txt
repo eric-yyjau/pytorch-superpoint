@@ -7,7 +7,7 @@ opencv-contrib-python==3.4.2.16
 matplotlib
 imageio
 tqdm
-tensorflow==1.14.0
+tensorflow==2.11.1
 tensorboardX
 tqdm
 pyyaml
