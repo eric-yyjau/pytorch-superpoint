@@ -26,12 +26,39 @@ from torchvision import transforms
 dtype_float = torch.FloatTensor
 dtype_long = torch.LongTensor
 
-def pytorch_rand_select_pixel(width,height,num_samples=1):
-    two_rand_numbers = torch.rand(2,num_samples)
-    two_rand_numbers[0,:] = two_rand_numbers[0,:]*width
-    two_rand_numbers[1,:] = two_rand_numbers[1,:]*height
-    two_rand_ints    = torch.floor(two_rand_numbers).type(dtype_long)
-    return (two_rand_ints[0], two_rand_ints[1])
+from dataclasses import dataclass
+
+@dataclass
+class RandVectorsPair:
+    w: int = None
+    h: int = None
+    num: int = None
+    vector1: torch.Tensor = None
+    vector2: torch.Tensor = None
+
+    def update(self, w, h, num, vector1, vector2):
+        self.w = w
+        self.h = h
+        self.num = num
+        self.vector1 = vector1
+        self.vector2 = vector2
+
+rand_vectors_pair = RandVectorsPair()
+
+def pytorch_rand_select_pixel(width,height,num_samples=1):  # works faster than original implementation with torch.rand((2, 100_000)) on each iter
+    if rand_vectors_pair.w == width and rand_vectors_pair.h == height and rand_vectors_pair.num == num_samples:
+        rand_vector1 = rand_vectors_pair.vector1
+        rand_vector2 = rand_vectors_pair.vector2
+
+        shift = random.randint(1, 5)
+        rand_vector1 = torch.roll(rand_vector1, shifts=shift, dims=0)
+        rand_vector2 = torch.roll(rand_vector2, shifts=-shift, dims=0)
+    else:
+        rand_vector1 = torch.randint(width, (num_samples, ), dtype=torch.long)
+        rand_vector2 = torch.randint(height, (num_samples, ), dtype=torch.long)
+    rand_vectors_pair.update(width, height, num_samples, rand_vector1, rand_vector2)
+    
+    return rand_vector1, rand_vector2
 
 def get_default_K_matrix():
     K = numpy.zeros((3,3))
@@ -271,8 +298,8 @@ def create_non_correspondences(uv_b_matches, img_b_shape, num_non_matches_per_ma
     threshold = torch.ones_like(diffs_0_flattened)*num_pixels_too_close
 
     # determine which pixels are too close to being matches
-    need_to_be_perturbed = where(diffs_0_flattened < threshold, ones, need_to_be_perturbed)
-    need_to_be_perturbed = where(diffs_1_flattened < threshold, ones, need_to_be_perturbed)
+    need_to_be_perturbed = torch.where(diffs_0_flattened < threshold, ones, need_to_be_perturbed)
+    need_to_be_perturbed = torch.where(diffs_1_flattened < threshold, ones, need_to_be_perturbed)
 
     minimal_perturb        = num_pixels_too_close/2
     minimal_perturb_vector = (torch.rand(len(need_to_be_perturbed))*2).floor()*(minimal_perturb*2)-minimal_perturb
@@ -294,11 +321,11 @@ def create_non_correspondences(uv_b_matches, img_b_shape, num_non_matches_per_ma
     lower_bound_vec = torch.ones_like(uv_b_non_matches_0_flat) * lower_bound
     upper_bound_vec = torch.ones_like(uv_b_non_matches_0_flat) * upper_bound
 
-    uv_b_non_matches_0_flat = where(uv_b_non_matches_0_flat > upper_bound_vec, 
+    uv_b_non_matches_0_flat = torch.where(uv_b_non_matches_0_flat > upper_bound_vec, 
         uv_b_non_matches_0_flat - upper_bound_vec, 
         uv_b_non_matches_0_flat)
 
-    uv_b_non_matches_0_flat = where(uv_b_non_matches_0_flat < lower_bound_vec, 
+    uv_b_non_matches_0_flat = torch.where(uv_b_non_matches_0_flat < lower_bound_vec, 
         uv_b_non_matches_0_flat + upper_bound_vec, 
         uv_b_non_matches_0_flat)
 
@@ -308,11 +335,11 @@ def create_non_correspondences(uv_b_matches, img_b_shape, num_non_matches_per_ma
     lower_bound_vec = torch.ones_like(uv_b_non_matches_1_flat) * lower_bound
     upper_bound_vec = torch.ones_like(uv_b_non_matches_1_flat) * upper_bound
 
-    uv_b_non_matches_1_flat = where(uv_b_non_matches_1_flat > upper_bound_vec, 
+    uv_b_non_matches_1_flat = torch.where(uv_b_non_matches_1_flat > upper_bound_vec, 
         uv_b_non_matches_1_flat - upper_bound_vec, 
         uv_b_non_matches_1_flat)
 
-    uv_b_non_matches_1_flat = where(uv_b_non_matches_1_flat < lower_bound_vec, 
+    uv_b_non_matches_1_flat = torch.where(uv_b_non_matches_1_flat < lower_bound_vec, 
         uv_b_non_matches_1_flat + upper_bound_vec, 
         uv_b_non_matches_1_flat)
 
@@ -463,8 +490,8 @@ def batch_find_pixel_correspondences(img_a_depth, img_a_pose, img_b_depth, img_b
     upper_bound_vec = torch.ones_like(u2_vec) * u2_vec_upper_bound
     zeros_vec       = torch.zeros_like(u2_vec)
 
-    u2_vec = where(u2_vec < lower_bound_vec, zeros_vec, u2_vec)
-    u2_vec = where(u2_vec > upper_bound_vec, zeros_vec, u2_vec)
+    u2_vec = torch.where(u2_vec < lower_bound_vec, zeros_vec, u2_vec)
+    u2_vec = torch.where(u2_vec > upper_bound_vec, zeros_vec, u2_vec)
     in_bound_indices = torch.nonzero(u2_vec)
     if in_bound_indices.dim() == 0:
         return (None, None)
@@ -484,8 +511,8 @@ def batch_find_pixel_correspondences(img_a_depth, img_a_pose, img_b_depth, img_b
     upper_bound_vec = torch.ones_like(v2_vec) * v2_vec_upper_bound
     zeros_vec       = torch.zeros_like(v2_vec)    
 
-    v2_vec = where(v2_vec < lower_bound_vec, zeros_vec, v2_vec)
-    v2_vec = where(v2_vec > upper_bound_vec, zeros_vec, v2_vec)
+    v2_vec = torch.where(v2_vec < lower_bound_vec, zeros_vec, v2_vec)
+    v2_vec = torch.where(v2_vec > upper_bound_vec, zeros_vec, v2_vec)
     in_bound_indices = torch.nonzero(v2_vec)
     if in_bound_indices.dim() == 0:
         return (None, None)
@@ -516,8 +543,8 @@ def batch_find_pixel_correspondences(img_a_depth, img_a_pose, img_b_depth, img_b
     z2_vec = z2_vec - occlusion_margin
     zeros_vec = torch.zeros_like(depth2_vec)
 
-    depth2_vec = where(depth2_vec < zeros_vec, zeros_vec, depth2_vec) # to be careful, prune any negative depths
-    depth2_vec = where(depth2_vec < z2_vec, zeros_vec, depth2_vec)    # prune occlusions
+    depth2_vec = torch.where(depth2_vec < zeros_vec, zeros_vec, depth2_vec) # to be careful, prune any negative depths
+    depth2_vec = torch.where(depth2_vec < z2_vec, zeros_vec, depth2_vec)    # prune occlusions
     non_occluded_indices = torch.nonzero(depth2_vec)
     if non_occluded_indices.dim() == 0:
         return (None, None)
