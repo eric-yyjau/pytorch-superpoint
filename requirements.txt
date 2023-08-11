@@ -8,7 +8,7 @@ tqdm==4.64.1
 tensorflow==1.14.0
 tensorboardX==2.6
 tqdm==4.64.1
-PyYAML==6.0
+PyYAML==5.4.0
 imageio==2.15.0
 imgaug==0.4.0
 jupyter==1.0.0
