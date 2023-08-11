@@ -37,13 +37,14 @@ model:
     }    
     batch_size: 1
     eval_batch_size: 1
-    detection_threshold: 0.015 # 0.015
+    detection_threshold: 0.005 # 0.015
     nms: 4
     top_k: 600
     subpixel:
         enable: true
 
 # pretrained: 'logs/magicpoint_synth20/checkpoints/superPointNet_200000_checkpoint.pth.tar' # 'SuperPointNet'
-pretrained: 'logs/magicpoint_synth_t2/checkpoints/superPointNet_100000_checkpoint.pth.tar'
+# pretrained: 'logs/magicpoint_synth_t2/checkpoints/superPointNet_100000_checkpoint.pth.tar'
+pretrained: 'logs/superpoint_coco_single_domain/checkpoints/superPointNet_170400_checkpoint.pth.tar'
 
 
