@@ -16,8 +16,7 @@ build: ## build image for dev, which is used for development
 
 run_container:
 	echo $(IMAGE_NAME_LOCAL)
-	docker run -it -d --gpus all \
+	docker run -it -d --gpus all --shm-size=4gb \
 	-v "$(WORKDIR)":/app \
-	-v "/media/4ter_disk/bru/UAV-sat/train_datasets":/app/nas \
 	--name superpoint_train \
 	$(IMAGE_NAME_LOCAL)
