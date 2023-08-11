@@ -267,8 +267,8 @@ def homography_scaling(homography, H, W):
     homography = np.linalg.inv(trans) @ homography @ trans
     return homography
 
-def homography_scaling_torch(homography, H, W):
-    trans = torch.tensor([[2./W, 0., -1], [0., 2./H, -1], [0., 0., 1.]])
+def homography_scaling_torch(homography, H, W, device='cpu'):
+    trans = torch.tensor([[2./W, 0., -1], [0., 2./H, -1], [0., 0., 1.]], device=device)
     homography = (trans.inverse() @ homography @ trans)
     return homography
 

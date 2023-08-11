@@ -183,6 +183,7 @@ class Train_model_heatmap(Train_model_frontend):
 
         task = "train" if train else "val"
         tb_interval = self.config["tensorboard_interval"]
+        skip_val_on_iter0 = self.config["skip_val_on_iter0"]
         if_warp = self.config['data']['warped_pair']['enable']
 
         self.scalar_dict, self.images_dict, self.hist_dict = {}, {}, {}
@@ -193,7 +194,6 @@ class Train_model_heatmap(Train_model_frontend):
             sample["labels_2D"],
             sample["valid_mask"],
         )
-        # img, labels = img.to(self.device), labels_2D.to(self.device)
 
         # variables
         batch_size, H, W = img.shape[0], img.shape[2], img.shape[3]
@@ -203,10 +203,6 @@ class Train_model_heatmap(Train_model_frontend):
         Hc = H // self.cell_size
         Wc = W // self.cell_size
 
-        # warped images
-        # img_warp, labels_warp_2D, mask_warp_2D = sample['warped_img'].to(self.device), \
-        #     sample['warped_labels'].to(self.device), \
-        #     sample['warped_valid_mask'].to(self.device)
         if if_warp:
             img_warp, labels_warp_2D, mask_warp_2D = (
                 sample["warped_img"],
@@ -385,7 +381,12 @@ class Train_model_heatmap(Train_model_frontend):
             loss.backward()
             self.optimizer.step()
 
-        if n_iter % tb_interval == 0 or task == "val":
+        if skip_val_on_iter0 and n_iter == 0:
+            skip_validation_on_this_step = True
+        else:
+            skip_validation_on_this_step = False
+
+        if ((n_iter % tb_interval == 0) and not skip_validation_on_this_step) or task == "val":
             logging.info(
                 "current iteration: %d, tensorboard_interval: %d", n_iter, tb_interval
             )
