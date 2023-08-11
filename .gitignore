@@ -3,3 +3,6 @@ __pycache__/
 *$py.class
 runs/*
 logs/*
+datasets/COCO*
+datasets/other/*
+local/*
