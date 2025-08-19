@@ -112,6 +112,7 @@ def export_descriptor(config, output_dir, args):
     Val_model_heatmap = get_module("", config["front_end_model"])
     ## load pretrained
     val_agent = Val_model_heatmap(config["model"], device=device)
+    val_agent.calibration_data = config.get("calibration_data")
     val_agent.loadModel()
 
     ## tracker
@@ -397,7 +398,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     with open(args.config, "r") as f:
-        config = yaml.load(f)
+        config = yaml.load(f, Loader=yaml.FullLoader)
     print("check config!! ", config)
 
     output_dir = os.path.join(EXPER_PATH, args.exper_name)

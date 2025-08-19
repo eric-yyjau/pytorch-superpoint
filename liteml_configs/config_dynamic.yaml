@@ -1,0 +1,18 @@
+QAT:
+  device: "cuda"
+  fully_quantized: True
+  data_quantization:
+    status: On
+    bits: 8
+    custom_bits: {}
+    symmetric: On
+    quantization_mode: dynamic
+    observer: "MinMax"
+    per_channel: False
+
+  weights_quantization:
+    status: On
+    bits: 8
+    custom_bits: {}
+    symmetric: On
+    per_channel: False

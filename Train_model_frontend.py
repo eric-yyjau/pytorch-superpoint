@@ -26,6 +26,9 @@ from utils.utils import precisionRecall_torch
 from utils.utils import save_checkpoint
 
 from pathlib import Path
+from liteml.ailabs_shared.load_config import load_config
+from liteml.ailabs_liteml.retrainer import RetrainerConfig, RetrainerModel
+from datasets.Coco import Coco
 
 
 def thd_img(img, thd=0.015):
@@ -204,6 +207,29 @@ class Train_model_frontend(object):
                 net, optimizer, n_iter, path, mode=mode, full_path=True
             )
             logging.info("successfully load pretrained model from: %s", path)
+
+        if self.liteml_config_path is not None:
+            calib_set = Coco(
+                export=True,
+                task='train',
+                **self.config['calibration_data'],
+            )
+            calib_set.samples = calib_set.samples[:100]  # use first 100 samples for calibration
+            calib_loader = torch.utils.data.DataLoader(
+                calib_set, batch_size=1, shuffle=False,
+                pin_memory=True,
+                num_workers=1,
+                # worker_init_fn=worker_init_fn
+
+            )
+            # liteml_conf_path = 'liteml_configs/config_static.yaml'
+            liteml_config = load_config(self.liteml_config_path)
+            liteml_config['QAT']['data_quantization']['calibration_loader'] = calib_loader
+            liteml_config['QAT']['data_quantization']['calibration_loader_key'] = lambda model, x: model(
+                x['image'].to(self.device))
+
+            net = RetrainerModel(net, config=RetrainerConfig(liteml_config))
+            net.to(self.device)
 
         def setIter(n_iter):
             if self.config["reset_iter"]:

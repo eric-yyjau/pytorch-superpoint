@@ -1,6 +1,6 @@
 data:
     dataset: 'Coco'  # 'coco' 'hpatches'
-    export_folder: 'train' # train, val
+    export_folder: 'val' # train, val
     preprocessing:
         resize: [240, 320] 
         # resize: [480, 640] 

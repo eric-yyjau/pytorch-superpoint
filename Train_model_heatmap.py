@@ -81,6 +81,7 @@ class Train_model_heatmap(Train_model_frontend):
         self._eval = True
         self.cell_size = 8
         self.subpixel = False
+        self.liteml_config_path = config.get("liteml_config_path", None)
 
         self.max_iter = config["train_iter"]
 

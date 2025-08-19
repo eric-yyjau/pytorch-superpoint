@@ -15,6 +15,7 @@ import torch.nn.functional as F
 import torch.utils.data
 from tqdm import tqdm
 from utils.loader import dataLoader, modelLoader, pretrainedLoader
+from liteml.ailabs_shared.load_config import load_config
 import logging
 
 from utils.tools import dict_update
@@ -27,6 +28,9 @@ from utils.utils import save_checkpoint
 
 from pathlib import Path
 from models.model_wrap import SuperPointFrontend_torch
+from liteml.ailabs_liteml.retrainer import RetrainerConfig, RetrainerModel
+from utils.liteml_pretrained import from_pretrained
+from datasets.Coco import Coco
 
 @torch.no_grad()
 class Val_model_heatmap(SuperPointFrontend_torch):
@@ -34,7 +38,13 @@ class Val_model_heatmap(SuperPointFrontend_torch):
         self.config = config
         self.model = self.config['name']
         self.params = self.config['params']
-        self.weights_path = self.config['pretrained']
+        self.weights_path = self.config.get('pretrained', None)
+        self.liteml_config_path = self.config.get('liteml_config_path', None)
+        # self.liteml_quantization_mode = self.config['quantization_mode']
+        self.liteml_pretrained_path = self.config.get('liteml_pretrained_path', None)
+        if self.weights_path is not None and self.liteml_pretrained_path is not None:
+            raise (ValueError, 'Only pretrained or liteml_pretrained_path should be passed in the config, not both.')
+        self.onnx_path = self.config.get('onnx_path', None)
         self.device=device
 
         ## other parameters
@@ -64,12 +74,61 @@ class Val_model_heatmap(SuperPointFrontend_torch):
         from utils.loader import modelLoader
         self.net = modelLoader(model=self.model, **self.params)
 
-        checkpoint = torch.load(self.weights_path,
-                                map_location=lambda storage, loc: storage)
-        self.net.load_state_dict(checkpoint['model_state_dict'])
+        if self.weights_path is not None:
+            checkpoint = torch.load(self.weights_path,
+                                    map_location=lambda storage, loc: storage)
+            self.net.load_state_dict(checkpoint['model_state_dict'])  # load pretrained float model
+            self.net = self.net.to(self.device)
+            logging.info('successfully load pretrained model from: %s', self.weights_path)
 
-        self.net = self.net.to(self.device)
-        logging.info('successfully load pretrained model from: %s', self.weights_path)
+        if self.onnx_path is not None:
+            import onnxruntime as ort
+            session = ort.InferenceSession(self.onnx_path)
+            def run(input_data):
+                device = input_data.device
+                input_name = session.get_inputs()[0].name
+                out = session.run(None, {input_name: input_data.detach().cpu().numpy()})
+                out_dict = {'semi': torch.tensor(out[0], device=device), 'desc': torch.tensor(out[1], device=device)}
+                return out_dict
+            self.net = run
+            return
+
+        if self.liteml_config_path is not None: # wrap with LiteML
+            if self.liteml_pretrained_path is not None:
+                # Load pretrained LiteML model after QAT
+                self.net = from_pretrained(self.net,
+                                              self.liteml_config_path,
+                                              self.liteml_pretrained_path,
+                                              device=self.device,
+                                              dummy_input=torch.rand((1, 1, 240, 320)),
+                                              )
+                self.net.eval()
+                self.net = self.net.to(self.device)
+                logging.info('successfully load LiteML QAT pretrained model from: %s', self.liteml_pretrained_path)
+
+            else:
+                # Wrap with LiteML for PTQ
+                calib_set = Coco(
+                    export=True,
+                    task='train',
+                    **self.calibration_data,
+                )
+                calib_set.samples = calib_set.samples[:100]  # use first 100 samples for calibration
+                calib_loader = torch.utils.data.DataLoader(
+                    calib_set, batch_size=1, shuffle=False,
+                    pin_memory=True,
+                    num_workers=1,
+                    # worker_init_fn=worker_init_fn
+
+                )
+                self.net = self.net.to(self.device)
+                liteml_config = load_config(self.liteml_config_path)
+                liteml_config['QAT']['data_quantization']['calibration_loader'] = calib_loader
+                liteml_config['QAT']['data_quantization']['calibration_loader_key'] = lambda model, x: model(
+                    x['image'].to(self.device))
+                with torch.no_grad():
+                    self.net = RetrainerModel(self.net, config=RetrainerConfig(liteml_config))
+                logging.info('successfully wrapped model with LiteML for PTQ')
         pass
 
     def extract_patches(self, label_idx, img):

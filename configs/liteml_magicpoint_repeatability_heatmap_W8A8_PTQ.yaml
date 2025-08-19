@@ -1,0 +1,65 @@
+calibration_data:
+    dataset: 'Coco'  # 'coco' 'hpatches'
+    export_folder: 'train' # train, val
+    preprocessing:
+        resize: [240, 320]
+    gaussian_label:
+        enable: false # false
+        sigma: 1.
+    augmentation:
+        photometric:
+            enable: false
+    homography_adaptation:
+        enable: false
+        num: 100 # 100
+        aggregation: 'sum'
+        filter_counts: 0
+        homographies:
+            params:
+                translation: true
+                rotation: true
+                scaling: true
+                perspective: true
+                scaling_amplitude: 0.2
+                perspective_amplitude_x: 0.2
+                perspective_amplitude_y: 0.2
+                allow_artifacts: true
+                patch_ratio: 0.85
+data:
+    name: 'patches_dataset'
+    dataset: 'hpatches'  # 'coco' 'hpatches'
+    alteration: 'all'  # 'all' 'i' 'v'
+    preprocessing:
+        resize: [240, 320]  # [240, 320] for HPatches and False for coco
+#        resize: [480, 640]  # [240, 320] for HPatches and False for coco
+    # labels: magicpoint_synth20_homoAdapt100_coco/predictions # for coco
+
+front_end_model: 'Val_model_heatmap'  # 'Train_model_frontend'
+model:
+    # name: 'magic_point'
+    name: 'SuperPointNet_gauss2' # SuperPointNet_heatmap
+    params: {
+    }
+
+    detection_threshold: 0.015 # 0.015
+    batch_size: 1
+    eval_batch_size: 1
+    # output parameters
+    learning_rate: 0.001
+    nms: 4
+    top_k: 1000
+    nn_thresh: 1.0 # 0.7
+    homography_adaptation:
+        num: 0
+    subpixel: 
+        enable: true
+        patch_size: 5
+    rand_noise:
+        enable: false
+        sigma: 0.2
+    pretrained: 'logs/superpoint_coco_heat2_0/checkpoints/superPointNet_170000_checkpoint.pth.tar' # PTQ
+    liteml_config_path: 'liteml_configs/config_static_w8a8.yaml'
+
+
+
+eval_iter: 1000
